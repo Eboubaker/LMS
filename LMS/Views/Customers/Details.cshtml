@@ -1,0 +1,38 @@
+﻿@model LMS.Models.Customer
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ 
+    var newsLetterSubscripedText = Model.IsSubscripedToNewsLetter ? "Yes" : "No";
+}
+<h2>@Model.Name</h2>
+<h4>Customer Details</h4>
+<table class="table table-responsive table-bordered">
+    <tr class="d-flex">
+        <th class="col-sm-2">Name</th>
+        <td class="col-sm-10">@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Subscriped To Newsletter</th>
+        <td>@newsLetterSubscripedText</td>
+    </tr>
+    <tr>
+        <th>Discount Rate</th>
+        <td>@Model.MembershipType.DiscountRate%</td>
+    </tr>
+    <tr>
+        <th>Birthdate</th>
+        <td>
+            @if (Model.Birthdate == null)
+            {
+                <text>No Data</text>
+            }
+            else {
+                @Model.Birthdate.Value.ToShortDateString()
+            }
+        </td>
+    </tr>
+</table>
+@Html.ActionLink("Edit", "Edit", new { id = Model.Id}, new { @class = "btn btn-primary" })
+

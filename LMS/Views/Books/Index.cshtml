@@ -1,0 +1,141 @@
+﻿@model System.Security.Principal.IPrincipal
+@{
+    ViewBag.Title = "Books";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Available Books</h2>
+<div class="container">
+    <div class="row mb-2">
+        @if (Model.IsInRole(LMS.Models.Role.CanAddBooks))
+        {
+            <div class="col-sm-2">
+                @Html.ActionLink("Add Book", "New", null, new { @class = "btn btn-primary" })
+            </div>
+        }
+    </div>
+</div>
+
+<table class="table table-bordered" id="js-books-table">
+    <thead>
+        <tr class="d-flex">
+            <th class="col-sm-2">Book</th>
+            <th>Class</th>
+            <th>Stock</th>
+            <th>Available</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#js-books-table").DataTable({
+                serverSide: true,
+                autoWidth: true,
+                processing:true,
+                ajax: {
+                    url: "/books/table",
+                    method: "GET",
+                    dataSrc: "data"
+                },
+                columnDefs: [
+                    { targets: 0, width: "50%" },
+                    { targets: 1, width: 80 },
+                    { targets: 2, width: 20 },
+                    { targets: 3, width: 20 },
+                    { targets: 4, width: 50, className:"allahuakbar" }
+                ],
+                columns: [
+                    {
+                        name:"Title",
+                        render: function (_, _, book) {
+                            return `<a href='/books/details/${book.id}' title='View This Book'> ${book.title} </a>`;
+                        }
+                    },
+                    {
+                        name: "Class",
+                        data: "class.name",
+                        searchable: false,
+                        orderable:false
+                    },
+                    {
+                        name: "NumberInStock",
+                        data: "numberInStock",
+                        searchable: false
+                    },
+                    {
+                        name: "numberAvailable",
+                        data: "numberAvailable",
+                        searchable: false
+                    },
+                    {
+                        data: "id",
+                        orderable: false,
+                        render: function (bookId) {
+                            var edit = remove = "";
+                            @if (Model.IsInRole(LMS.Models.Role.CanAddBooks))
+                            {
+                                <text>edit = `<a href="/books/edit/${bookId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
+                            }
+                            @if (Model.IsInRole(LMS.Models.Role.CanDeleteBooks))
+                            {
+                                <text>remove = `<a href="#" data-book-id='${bookId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                            }
+                            return `<span style="display:flex">${edit} ${remove}</span>`;
+                        }
+                    }
+                ]
+            });
+            $("#js-books-table").on("click", ".js-delete", function () {
+                var button = $(this);
+                @*bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/book/" + button.data("book-id"),
+                            method: "DELETE",
+                            success: function () {
+                                table.row(button.parents('tr')).remove().draw();
+                            }
+                        })
+                    }
+                    return false;
+                });*@
+                bootbox.dialog({
+                    title: "Confirm Your Action",
+                    message: '<span>Delete <strong>" ' + button.parents('tr').children().first().find("a").text() + '"</strong> ?</span>',
+                    backdrop:true,
+                    buttons: {
+                        confirm: {
+                            label: 'Delete',
+                            className: 'btn-danger',
+                            callback: function () {
+                                $.ajax({
+                                    url: "/books/delete/" + button.data("book-id"),
+                                    method: "DELETE",
+                                    success: function () {
+                                        table.row(button.parents('tr')).remove().draw();
+                                        toastr.success("Book Removed!");
+                                    }
+                                })
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-secondary',
+                            callback: function () {
+                                console.log("you piece of shit, why");
+                            }
+                        }
+                        
+                    },
+                    onEscape: function () {
+                        console.log("help welp melp");
+                    }
+                });
+            });
+        });
+    </script>
+}

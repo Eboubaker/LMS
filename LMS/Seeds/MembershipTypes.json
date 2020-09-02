@@ -1,0 +1,27 @@
+
+[
+  {
+    "Name": "Pay As You Go",
+    "SignUpFee": 0,
+    "DurationInMonths": 0,
+    "DiscountRate": 0
+  },
+  {
+    "Name": "Monthly",
+    "SignUpFee": 30,
+    "DurationInMonths": 1,
+    "DiscountRate": 10
+  },
+  {
+    "Name": "Quarty",
+    "SignUpFee": 90,
+    "DurationInMonths": 3,
+    "DiscountRate": 15
+  },
+  {
+    "Name": "Pay As You Go",
+    "SignUpFee": 300,
+    "DurationInMonths": 12,
+    "DiscountRate": 20
+  }
+]

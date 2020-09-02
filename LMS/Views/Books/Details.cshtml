@@ -1,0 +1,48 @@
+﻿@model LMS.Models.Book
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.ActionLink(nameof(LMS.));
+<h4>Book Details</h4>
+<table class="table table-responsive table-bordered">
+    <tr class="d-flex">
+        <th class="col-sm-2">Title</th>
+        <td>@Model.Title</td>
+    </tr>
+    <tr>
+        <th>Genres</th>
+        <td>@Model.Class.Name</td>
+    </tr>
+    <tr>
+        <th>Release Year</th>
+        <td>@Model.ReleaseYear</td>
+    </tr>
+    <tr>
+        <th>Date Added</th>
+        <td>@Model.DateAdded.Value.ToString("yyyy-MM-dd")</td>
+    </tr>
+    <tr>
+        <th>Available</th>
+        <td>@Model.NumberAvailable</td>
+    </tr>
+    <tr>
+        <th>Library Stock</th>
+        <td>@Model.NumberInStock</td>
+    </tr>
+    <tr>
+        <th>Rented</th>
+        <td>@rented</td>
+    </tr>
+</table>
+
+@if (User.IsInRole(LMS.Models.Role.CanEditBooks))
+{
+    @Html.ActionLink("Edit", "Edit", "Books", new { id = Model.Id }, new { @class = "btn btn-info" })
+}
+@if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
+{
+    @Html.ActionLink("Delete", "Delete", "Books", new { id = Model.Id }, new { @class = "btn btn-danger" })
+}
+
+

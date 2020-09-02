@@ -1,0 +1,112 @@
+﻿@model LMS.ViewModels.BookFormViewModel
+@{
+    ViewBag.Title = "New Book";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>New Book</h2>
+
+<form id="newBookForm" method="post" action="/api/books">
+    <div class="form-group">
+        @Html.LabelFor(c => c.Book.Name)
+        @Html.TextBoxFor(c => c.Book.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Book.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.Book.ReleaseDate)
+        @Html.TextBoxFor(c => c.Book.ReleaseDate, new { @class = "form-control", type = "date" })
+        @Html.ValidationMessageFor(c => c.Book.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.Book.NumberInStock)
+        @Html.TextBoxFor(c => c.Book.NumberInStock, new { @class = "form-control" , type = "number"})
+        @Html.ValidationMessageFor(c => c.Book.Name)
+
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Genres)
+    </div>
+    <div class="container-fluid">
+        <ul class="posttags">
+        </ul>
+    </div>
+    @Html.DropDownListFor(m => m.Genres, new SelectList(Model.Genres, "Id", "Name"), "Add Genre", new { @class = "form-control"})
+    @Html.ValidationMessageFor(c => c.Genres)
+    <button type="submit" class="btn btn-primary">Create</button>
+    @Html.AntiForgeryToken()
+</form>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var genres = [];// array(Genre)
+            var bookGenres = [];// array({id:int, name:string})
+            var form = $("#newBookForm");
+            @foreach(var genre in Model.Genres)
+            {
+                <text>
+                    genres.push({ id:@genre.Id, name: "@genre.Name" });
+                </text>
+            }
+            // remove genre
+            $(".posttags").on("click", "li>a>span", function (e) {
+                var li = $($(e.target).parents("li"));
+                var id = li.data("id");
+                var newarr = bookGenres.filter(i => i != id);
+                if (newarr.length != bookGenres.length) {
+                    
+                    $(`#Genres>option[value='${id}']`).show();
+                    li.remove();
+                    bookGenres = newarr;
+                    $(`#Genres`).val("");
+                }
+            });
+            // add genre
+            $("#Genres").on("change", function (e) {
+                var list = e.target;
+                var id = parseInt(list.value);
+                if (Number.isInteger(id)) {
+                    var genreName = genres.find(i => i.id == id).name;
+                    $(".posttags").append(`<li data-id="${id}"><a href="#" onclick="return false;">${genreName}<span>X</span></a></li>`)
+                    $(`#Genres>option[value='${id}']`).hide();
+                    bookGenres.push(id);
+                    $(`#Genres`).val("");
+                }
+            });
+
+            $.validator.addMethod("genres-validator", function () {
+                return bookGenres.length > 0 && bookGenres.length <= 3;
+            }, "You must Add at least 1 Genre and maximum of 3");
+            form.submit(function (e) {
+                var book = {};
+                console.log(form);
+                book.Name = $("#Book_Name").val();
+                book.ReleaseDate = $("#Book_ReleaseDate").val();;
+                book.NumberInStock = $("#Book_NumberInStock").val();
+                book.Genres = [];
+                for (var gid of bookGenres) {
+                    book.Genres.push({ Id: gid, Name: "_" });
+                }
+                console.log(book);
+                $.ajax({
+                    url: form[0].action,
+                    method: form[0].method,
+                    data: book
+                }).done(function (serverBook, b, c) {
+                    toastr.success(`Book Created <a class='toast-link' href='@Url.Action(nameof(LMS.Controllers.BooksController.Details), nameof(LMS.Models.Book) +"s")/${serverBook.id}'>View</a>`);
+                    reset
+                    form[0].reset();
+                    $(`#Genres>option:hidden`).show();
+                    @* window.location.href = window.location.protocol + "//" + window.location.host + "/books/details/" + serverBook.id;*@
+                }).fail(function (xhr, errorText, c) {
+                    console.log(xhr, errorText, c);
+                    toastr.error("Error: " + xhr.responseJSON.message);
+                });
+                return false;
+            });
+        });
+
+        
+    </script>
+}
+

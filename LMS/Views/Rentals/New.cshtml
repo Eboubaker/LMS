@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "New Rental";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>New Rental</h2>
+
+<form id="newRentalForm">
+    <div class="form-group">
+        <label>Customer</label>
+        <div class="tt-container">
+            <input id="js-customer" name="customer" data-rule-customer-validator="true" required class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Book</label>
+        <div class="tt-container">
+            <input id="js-book" name="book" data-rule-books-validator="true" class="form-control" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Rent</button>
+</form>
+<div class="row">
+    <div class="col-md-4">
+        <ul id="books" class="list-group my-2"></ul>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        @* view model *@
+        var vm = {
+            customerId:null,
+            bookIds:[]
+        };
+        $(document).ready(function () {
+
+            var customers = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                @* prefetch: '../data/films/post_1960.json',*@
+                remote: {
+                    url: '/api/customers?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#js-customer').typeahead({
+                minLength: 2,
+                highlight: true
+            }
+                , {
+                    name: 'customers',
+                    display: 'name',
+                    source: customers
+                }).on("typeahead:select", function (e, customer) {
+                    vm.customerId = customer.id;
+                });
+
+
+            var books = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/books?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+            $('#js-book').typeahead({
+                minLength: 2,
+                highlight: true
+            },
+                {
+                    name: 'books',
+                    display: 'name',
+                    source: books
+                }).on("typeahead:select", function (e, book) {
+                    $("#books").append($("<li>").text(book.name).addClass("list-group-item"));
+                    vm.bookIds.push(book.id);
+                });
+            $.validator.addMethod("customer-validator", function () {
+                return vm.customerId && vm.customerId != 0;
+            }, "Please Select a valid Customer");
+            $.validator.addMethod("books-validator", function () {
+                return vm.bookIds.length != 0 && !vm.bookIds.some(i => !Number.isInteger(i));
+            }, "Please Select at least 1 valide book");
+
+            var validator = $("#newRentalForm").validate({
+                onkeyup: false,
+                onclick: false,
+                submitHandler: function () {
+                    $.ajax({
+                        url: "/api/newRentals",
+                        method: "post",
+                        data: vm
+                    }).done(function () {
+                        toastr.success("Succussfully Rented books")
+                    })
+                        .fail(function () {
+                            toastr.error("Something unexpected Happened");
+                        });
+                    $("#customers").typeahead("val", "");
+                    $("#js-book").typeahead("val", "");
+                    $("#books").empty();
+                    validator.resetForm();
+                    vm = {
+                        customerId : null,
+                        bookIds : []
+                    }
+                    return false;
+                }
+            });
+        });
+    </script>
+    
+}

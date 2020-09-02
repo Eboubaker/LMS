@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Rentals</h2>
+
+<div class="container">
+    <div class="row mb-2">
+        <div class="col-sm-2">
+            @Html.ActionLink("New Rental", "New", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered" id="js-books-table">
+    <thead>
+        <tr class="d-flex">
+            <th class="col-sm-2">Customer</th>
+            <th>Book</th>
+            <th>Rental Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#js-books-table").DataTable({
+                ajax: {
+                    url: "/api/books",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "customer.name",
+                        render: function (bookName, row, book) {
+                            return `<a href='/books/details/${book.id}' title='View This Book'> ${bookName} </a>`;
+                        }
+                    },
+                    {
+                        data: "genres",
+                        render: function (genreList) {
+                            var genres = "";
+                            for (let i = 0; i < genreList.length - 1; i++) {
+                                genres += genreList[i].name + ", ";
+                            }
+                            genres += genreList[genreList.length - 1].name;
+                            return "<span>" + genres + "</span>";
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (bookId) {
+                            return `<span style="display:flex">
+                                        <a href="/books/edit/${bookId}" class="mx-1">Edit</a>
+                                        <a href="#" data-book-id='${bookId}' class='js-delete mx-1'>Delete</a>
+                                    </span>`;
+                        }
+                    }
+                ]
+            });
+            $("#js-books-table").on("click", ".js-delete", function () {
+                var button = $(this);
+                bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/book/" + button.data("book-id"),
+                            method: "DELETE",
+                            success: function () {
+                                table.row(button.parents('tr')).remove().draw();
+                            }
+                        })
+                    }
+                    return false;
+                });
+            });
+        });
+    </script>
+}
