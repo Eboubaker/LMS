@@ -1,6 +1,9 @@
-﻿using System;
+﻿using FluentValidation;
+using FluentValidation.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -9,17 +12,15 @@ namespace LMS.Models
     public class Customer
     {
         public int Id { get; set; }
-        [Required]
-        [StringLength(255)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Name is Required")]
+        [StringLength(maximumLength: 255, MinimumLength = 3, ErrorMessage = "Name Should be 3 to 255 Long")]
         public string Name { get; set; }
-        [Display(Name = "Date of Birth")]
         public DateTime? Birthdate { get; set; }
-        [Required]
-        public bool IsSubscripedToNewsLetter { get; set; }
-        [Required]
-        [Display(Name = "Membership Type")]
-        public int MembershipTypeId { get; set; }
-        public MembershipType MembershipType { get; set; }
-        
+        [Index(IsUnique = true)]
+        [Display(Name = "Card Id")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Card Id is Required")]
+        [StringLength(maximumLength: 25,MinimumLength = 4)]
+        public string StateId { get; set; }
+
     }
 }

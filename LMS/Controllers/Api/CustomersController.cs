@@ -22,14 +22,13 @@ namespace LMS.Controllers.Api
         // GET /api/customers
         public IHttpActionResult GetCustomers(string query = null)
         {
-            var customersQuery = _context.Customers
-                            .Include(c => c.MembershipType);
-            if (!String.IsNullOrWhiteSpace(query))
-                customersQuery = customersQuery.Where(c => c.Name.Contains(query));
-            var customerDtos = customersQuery
-                            .ToList()
-                            .Select(Mapper.Map<Customer, Customer>);
-            return Ok(customerDtos);
+            //var customersQuery = 
+            //if (!String.IsNullOrWhiteSpace(query))
+            //    customersQuery = _context.Customers.customersQuery.Where(c => c.Name.Contains(query));
+            //var customerDtos = _context.Customers
+            //                .ToList()
+            //                .Select(Mapper.Map<Customer, Customer>);
+            return Ok();
         }
         // GET /api/customers/{id}
         public IHttpActionResult GetCustomer(int id)

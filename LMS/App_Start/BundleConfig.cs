@@ -32,7 +32,8 @@ namespace LMS
                           "~/Content/font-awesome/css/all.min.css",
                           "~/Content/toastr.css",
                           "~/Content/tags.css",
-                          "~/Content/site.css"
+                          "~/Content/site.css",
+                          "~/Content/balloon-css/balloon.*"
                       ));
         }
     }

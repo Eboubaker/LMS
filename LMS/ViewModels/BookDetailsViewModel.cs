@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LMS.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,10 +8,7 @@ namespace LMS.ViewModels
 {
     public class BookDetailsViewModel
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime ReleaseDate { get; set; }
-        public DateTime DateAdded { get; set; }
-        public int NumberInStock { get; set; }
+        public Book Book { get; set; }
+        public ICollection<BookCopy> RentedBooks { get; set; }
     }
 }

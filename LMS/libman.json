@@ -13,6 +13,10 @@
     {
       "library": "font-awesome@5.14.0",
       "destination": "Content/font-awesome/"
+    },
+    {
+      "library": "balloon-css@1.2.0",
+      "destination": "Content/balloon-css/"
     }
   ]
 }

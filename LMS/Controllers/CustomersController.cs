@@ -25,14 +25,14 @@ namespace LMS.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            var customers = _context.Customers.Include(nameof(Customer.MembershipType)).ToList();
+            var customers = _context.Customers.ToList();
             var c = 2;
             return View(customers);
         }
         // GET: Customers/Details/{id}
         public ActionResult Details(int id)
         {
-            var customer = _context.Customers.Include(nameof(Customer.MembershipType)).SingleOrDefault(c => c.Id == id);
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
             if(customer == null)
             {
                 return HttpNotFound();
@@ -69,8 +69,6 @@ namespace LMS.Controllers
             }
             customerInDb.Name = customer.Name;
             customerInDb.Birthdate = customer.Birthdate;
-            customerInDb.MembershipTypeId = customer.MembershipTypeId;
-            customerInDb.IsSubscripedToNewsLetter = customer.IsSubscripedToNewsLetter;
             _context.SaveChanges();
             return RedirectToAction("Index", "Customers");
         }

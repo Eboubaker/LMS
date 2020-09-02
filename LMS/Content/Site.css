@@ -51,5 +51,11 @@ textarea {
     margin-top: .25rem;
 }
 
+.tooltip-danger {
+    --balloon-color: #d9534f;
+}
+.tooltip-warning {
+    --balloon-color: #f0ad4e;
+}
 
 

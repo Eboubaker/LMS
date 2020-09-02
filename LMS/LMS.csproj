@@ -57,6 +57,15 @@
     <Reference Include="FileHelpers, Version=3.4.1.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
       <HintPath>..\packages\FileHelpers.3.4.1\lib\net45\FileHelpers.dll</HintPath>
     </Reference>
+    <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.8.6.1\lib\net45\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation.Mvc, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.Mvc5.8.6.1\lib\net45\FluentValidation.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation.ValidatorAttribute, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.ValidatorAttribute.8.6.1\lib\net45\FluentValidation.ValidatorAttribute.dll</HintPath>
+    </Reference>
     <Reference Include="Glimpse.Ado, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.Ado.1.7.3\lib\net45\Glimpse.Ado.dll</HintPath>
     </Reference>
@@ -77,6 +86,9 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.4.1\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -219,6 +231,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.cs" />
+    <Compile Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.Designer.cs">
+      <DependentUpon>202009021253236_add-basebook-to-rental-for-ease-of-use.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009021258510_add-basebook-to-rental-for-ease-of-use2.cs" />
+    <Compile Include="Migrations\202009021258510_add-basebook-to-rental-for-ease-of-use2.Designer.cs">
+      <DependentUpon>202009021258510_add-basebook-to-rental-for-ease-of-use2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009021642048_lalala.cs" />
+    <Compile Include="Migrations\202009021642048_lalala.Designer.cs">
+      <DependentUpon>202009021642048_lalala.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\BookCopy.cs" />
@@ -246,6 +271,8 @@
     <Content Include="App_Data\Database1_log.ldf">
       <DependentUpon>Database1.mdf</DependentUpon>
     </Content>
+    <Content Include="Content\balloon-css\balloon.css" />
+    <Content Include="Content\balloon-css\balloon.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap-lumen.min.css" />
@@ -611,13 +638,23 @@
     <Content Include="Views\Customers\New.cshtml" />
     <Content Include="Views\Customers\Edit.cshtml" />
     <Content Include="Views\Books\New.cshtml" />
-    <Content Include="Views\Books\Edit.cshtml" />
+    <Content Include="Views\Books\Form.cshtml" />
     <Content Include="Views\Rentals\New.cshtml" />
     <Content Include="Seeds\MembershipTypes.json" />
     <Content Include="Views\Rentals\Index.cshtml" />
     <Content Include="Views\Books\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.resx">
+      <DependentUpon>202009021253236_add-basebook-to-rental-for-ease-of-use.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009021258510_add-basebook-to-rental-for-ease-of-use2.resx">
+      <DependentUpon>202009021258510_add-basebook-to-rental-for-ease-of-use2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009021642048_lalala.resx">
+      <DependentUpon>202009021642048_lalala.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

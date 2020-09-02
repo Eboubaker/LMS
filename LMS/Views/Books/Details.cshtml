@@ -3,7 +3,11 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@Html.ActionLink(nameof(LMS.));
+@{
+    var rented = Model.NumberInStock - Model.NumberAvailable;
+
+}
+<br /><br />
 <h4>Book Details</h4>
 <table class="table table-responsive table-bordered">
     <tr class="d-flex">
@@ -20,29 +24,57 @@
     </tr>
     <tr>
         <th>Date Added</th>
-        <td>@Model.DateAdded.Value.ToString("yyyy-MM-dd")</td>
+        <td>@Model.DateAdded.Value.ToString("dd-MM-yyyy | hh:mm tt")</td>
     </tr>
     <tr>
         <th>Available</th>
-        <td>@Model.NumberAvailable</td>
+        <td>
+            @if (Model.NumberAvailable == 0)
+            {
+                <span class="text-danger">Out of Stock!</span>
+            }
+            else
+            {
+                @Model.NumberAvailable
+            }
+        </td>
     </tr>
     <tr>
         <th>Library Stock</th>
-        <td>@Model.NumberInStock</td>
+        <td>
+            @if (Model.NumberInStock == 0)
+            {
+                <span class="text-danger">No Stock!</span>
+            }
+            else
+            {
+                @Model.NumberInStock
+            }
+        </td>
     </tr>
     <tr>
         <th>Rented</th>
         <td>@rented</td>
     </tr>
 </table>
-
-@if (User.IsInRole(LMS.Models.Role.CanEditBooks))
-{
-    @Html.ActionLink("Edit", "Edit", "Books", new { id = Model.Id }, new { @class = "btn btn-info" })
-}
-@if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
-{
-    @Html.ActionLink("Delete", "Delete", "Books", new { id = Model.Id }, new { @class = "btn btn-danger" })
-}
+<h4>Actions</h4>
+<hr />
+<div class="row" style="margin-left:0">
+    @if (User.IsInRole(LMS.Models.Role.CanEditBooks))
+    {
+        @Html.ActionLink("Edit", "Edit", "Books", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (Model.NumberAvailable > 0)
+    {
+        @Html.RouteLink("Rent", new { controller = nameof(LMS.Models.Rental) + "s", action = "New", bookId = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
+    {
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
+    {
+        @Html.ActionLink("Delete", "Delete", "Books", new { id = Model.Id }, new { @class = "btn btn-danger" })
+    }
+    </div>
 
 

@@ -1,17 +1,26 @@
 ﻿@model LMS.ViewModels.BookFormViewModel
 @{
-    ViewBag.Title = "Edit";
+    var editMode = Model.Book.Id != 0;
+    ViewBag.Title = editMode ? "Edit Book" : "New Book";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @{
     // if i rename the controller or the action i don't have to do it here too
-    var controller = nameof(LMS.Controllers.BooksController.Update);
-    var action = nameof(LMS.Models.Book) + "s";
+    var action = editMode ? nameof(LMS.Controllers.BooksController.Update) : nameof(LMS.Controllers.BooksController.Add);
+    var controller = nameof(LMS.Models.Book) + "s";
 }
-<h2>Edit Book</h2>
+@if (editMode)
+{
+    <h2>Edit Book</h2>
+}
+else
+{
+    <h2>New Book</h2>
+}
 
-@using (Html.BeginForm(controller, action))
+
+@using (Html.BeginForm(action, controller))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Title)
@@ -54,7 +63,14 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Class)
-        @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name", Model.Book.Class.Id), Model.Book.Class.Name, new { @class = "form-control" })
+        @if (Model.Book != null)
+        {
+            @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name", Model.Book.Class.Id), Model.Book.Class.Name, new { @class = "form-control" })
+        }
+        else
+        {
+            @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name", Model.Book.Class.Id), Model.Book.Class.Name, new { @class = "form-control" })
+        }
         @Html.ValidationMessageFor(m => m.Book.ClassId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">

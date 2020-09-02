@@ -9,19 +9,19 @@
 
 <form id="newBookForm" method="post" action="/api/books">
     <div class="form-group">
-        @Html.LabelFor(c => c.Book.Name)
-        @Html.TextBoxFor(c => c.Book.Name, new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Book.Name)
+        @Html.LabelFor(c => c.Book.Title)
+        @Html.TextBoxFor(c => c.Book.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Book.Title)
     </div>
     <div class="form-group">
-        @Html.LabelFor(c => c.Book.ReleaseDate)
-        @Html.TextBoxFor(c => c.Book.ReleaseDate, new { @class = "form-control", type = "date" })
-        @Html.ValidationMessageFor(c => c.Book.Name)
+        @Html.LabelFor(c => c.Book.ReleaseYear)
+        @Html.TextBoxFor(c => c.Book.ReleaseYear, new { @class = "form-control", type = "number" })
+        @Html.ValidationMessageFor(c => c.Book.ReleaseYear)
     </div>
     <div class="form-group">
         @Html.LabelFor(c => c.Book.NumberInStock)
         @Html.TextBoxFor(c => c.Book.NumberInStock, new { @class = "form-control" , type = "number"})
-        @Html.ValidationMessageFor(c => c.Book.Name)
+        @Html.ValidationMessageFor(c => c.Book.NumberInStock)
 
     </div>
     <div class="form-group">

@@ -40,7 +40,10 @@ namespace LMS.Controllers
         // GET: Books/Details/{id}
         public ActionResult Details(int id)
         {
-            var book = _context.Books.SingleOrDefault(c => c.Id == id);
+            var book = _context.Books
+                .Include(m => m.Class)
+                .Include(m => m.Language)
+                .SingleOrDefault(c => c.Id == id);
             if(book == null)
             {
                 return HttpNotFound("ID not Found");
@@ -52,17 +55,16 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(Book book)
         {
-            if (!ModelState.IsValid){
-                var movieForm = new BookFormViewModel()
-                {
-                    Book = book,
-                    //Genres = _context.Genres.ToList()
-                };
-                return View("New", movieForm);
+            if (!ModelState.IsValid)
+            {
+                return HttpNotFound("Invalid Model State");
             }
             _context.Books.Add(book);
-            bool succ = _context.SaveChanges() == 1;
-            return RedirectToAction("Index");
+            if (_context.SaveChanges() > 0)
+            {
+                return RedirectToAction("Details", new { id = book.Id});
+            }
+            return HttpNotFound("Can't Add Book");
         }
         // Get: Books/Edit/{id}
         public ActionResult Edit(int id)
@@ -80,7 +82,7 @@ namespace LMS.Controllers
                 Classes = classes,
                 Languages = languages
             };
-            return View(viewModel);
+            return View("Form", viewModel);
         }
         // POST: Books/Update
         [HttpPost]
@@ -105,10 +107,11 @@ namespace LMS.Controllers
             var languages = _context.Languages.ToList();
             var viewModel = new BookFormViewModel()
             {
+                Book = new Book() { Class = new Class() { Name = "" }, Language = new Language() { Name = "" } },
                 Classes = classes,
                 Languages = languages
             };
-            return View(viewModel);
+            return View("Form", viewModel);
         }
         // Get: Books/Delete/{id}
         public ActionResult Delete(int id)
