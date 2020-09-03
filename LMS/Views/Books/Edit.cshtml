@@ -17,7 +17,7 @@
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Title)
         @Html.TextBoxFor(m => m.Book.Title, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Book.Title, "Title is Required and must be 3-400 Length", new { @class = "text-danger" })
+        @Html.ValidationMessageFor(m => m.Book.Title, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Authors)
@@ -56,12 +56,12 @@
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Class)
         @Html.DropDownListFor(m => m.Book.ClassId, new SelectList(Model.Classes, "Id", "Name", Model.Book.ClassId), "", new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Book.ClassId, "Class is Required", new { @class = "text-danger" })
+        @Html.ValidationMessageFor(m => m.Book.ClassId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Language)
         @Html.DropDownListFor(m => m.Book.LanguageId, new SelectList(Model.Languages, "Id", "Name", Model.Book.LanguageId), "", new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Book.LanguageId, "Language is Required", new { @class = "text-danger" })
+        @Html.ValidationMessageFor(m => m.Book.LanguageId, "", new { @class = "text-danger" })
     </div>
     @Html.ValidationSummary(true, "Please Fix These Errors", new { @class="text-danger"})
     <button type="submit" class="btn btn-primary">Save</button>
