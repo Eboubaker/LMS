@@ -12,7 +12,7 @@ namespace LMS.Models
         public int Id { get; set; }
         public int ClassCode { get; set; }
         [Required]
-        [StringLength(400)]
+        [StringLength(maximumLength:400 ,MinimumLength = 3, ErrorMessage = "Title must be 3-400 Long")]
         public string Title { get; set; }
         public string Authors { get; set; }
         [Required]

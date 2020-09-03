@@ -1,60 +1,101 @@
-﻿@model System.Collections.Generic.IEnumerable<LMS.Models.Customer>
+﻿@model System.Security.Principal.IPrincipal
 @{
     ViewBag.Title = "Customers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h2>Registered Customers</h2>
+<div class="container">
+    <div class="row mb-2">
+        @if (User.IsInRole(LMS.Models.Role.CanAddCustomers))
+        {
+            <div class="col-sm-2 pl-0">
+                @Html.ActionLink("Create Customer", "New", null, new { @class = "btn btn-primary" })
+            </div>
+        }
+    </div>
+</div>
 
-<h2>Customers</h2>
-@Html.ActionLink("New Customer", "New", "Customers", null, new { @class = "btn btn-primary" })
-<table id="js-customers-table" class="table table-bordered">
+<table class="table table-bordered" id="js-customers-table">
     <thead>
         <tr class="d-flex">
-            <th class="col-sm-2">Name</th>
-            <th class="col-sm-10">Membership Type</th>
-            <th class="col-sm-10">Actions</th>
+            <th class="col-sm-2">Customer</th>
+            <th>Rented Books</th>
+            <th>Card Id</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
+
 @section scripts{
     <script>
         $(document).ready(function () {
             var table = $("#js-customers-table").DataTable({
+                serverSide: true,
+                autoWidth: true,
+                processing:true,
                 ajax: {
-                    url: "/api/customers",
-                    dataSrc: ""
+                    url: "/customers/table",
+                    method: "GET",
+                    dataSrc: "data"
                 },
                 columns: [
                     {
-                        data: "name",
-                        render: function (customerName, row, customer) {
-                            return `<p> ${customerName} </p>`;
+                        name: "Customer",
+                        targets: 0,
+                        width:"50%",
+                        render: function (_, _, customer) {
+                            return `<a href='/customer/details/${customer.id}' title='View This Customer'> ${customer.name} </a>`;
                         }
                     },
                     {
-                        data: "membershipType.name",
-                        render: function (membershipTypeName) {
-                            return `<p> ${membershipTypeName} </p>`;
+                        name: "Rented Books",
+                        targets:1,
+                        width:80,
+                        searchable: false,
+                        render: function (_, _, customer) {
+                            if (customer.rentalsCount > 0) {
+                                return `<a href='/rentals/ForCustomer/${customer.id}'>${customer.rentalsCount} Books<a/>`;
+                            }
+                            return "0";
                         }
                     },
                     {
+                        name: "Card Id",
+                        targets: 2,
+                        width: 50,
+                        data: "cardId",
+                        searchable: true,
+                        orderable: false
+                    },
+                    {
+                        name: "Actions",
+                        targets:2,
                         data: "id",
+                        width: 80,
+                        orderable: false,
                         render: function (customerId) {
-                            return `<span style="display:flex">
-                                        <a href="/customers/edit/${customerId}" class="mx-1">Edit</a>
-                                        <a href="#" data-customer-id='${customerId}' class='js-delete mx-1'>Delete</a>
-                                    </span>`;
+                            var edit = remove = "";
+                            @if (User.IsInRole(LMS.Models.Role.CanAddCustomers))
+                            {
+                                <text>edit = `<a href="/customers/edit/${customerId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
+                            }
+                            @if (User.IsInRole(LMS.Models.Role.CanDeleteCustomers))
+                            {
+                                <text>remove = `<a href="#" data-customer-id='${customerId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                            }
+                            return `<span style="display:flex">${edit} ${remove}</span>`;
                         }
                     }
                 ]
             });
             $("#js-customers-table").on("click", ".js-delete", function () {
                 var button = $(this);
-                bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
+                @*bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
                     if (result) {
                         $.ajax({
-                            url: "/api/customers/" + button.data("customer-id"),
+                            url: "/api/book/" + button.data("book-id"),
                             method: "DELETE",
                             success: function () {
                                 table.row(button.parents('tr')).remove().draw();
@@ -62,7 +103,40 @@
                         })
                     }
                     return false;
+                });*@
+                bootbox.dialog({
+                    title: "Confirm Your Action",
+                    message: '<span>Delete Customer <strong>" ' + button.parents('tr').children().first().find("a").text() + '"</strong> ?</span>',
+                    backdrop:true,
+                    buttons: {
+                        confirm: {
+                            label: 'Delete',
+                            className: 'btn-danger',
+                            callback: function () {
+                                $.ajax({
+                                    url: "/customers/delete/" + button.data("book-id"),
+                                    method: "POST",
+                                    success: function () {
+                                        table.row(button.parents('tr')).remove().draw();
+                                        toastr.success("Customer Removed!");
+                                    }
+                                })
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-secondary',
+                            callback: function () {
+                                console.log("you piece of shit, why");
+                            }
+                        }
+
+                    },
+                    onEscape: function () {
+                        console.log("help welp melp");
+                    }
                 });
+                return false;
             });
         });
     </script>

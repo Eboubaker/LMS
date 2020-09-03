@@ -1,31 +1,23 @@
 ﻿@model LMS.ViewModels.BookFormViewModel
 @{
-    var editMode = Model.Book.Id != 0;
-    ViewBag.Title = editMode ? "Edit Book" : "New Book";
+    ViewBag.Title = "Edit Book";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @{
     // if i rename the controller or the action i don't have to do it here too
-    var action = editMode ? nameof(LMS.Controllers.BooksController.Update) : nameof(LMS.Controllers.BooksController.Add);
+    var action = nameof(LMS.Controllers.BooksController.Update);
     var controller = nameof(LMS.Models.Book) + "s";
 }
-@if (editMode)
-{
-    <h2>Edit Book</h2>
-}
-else
-{
-    <h2>New Book</h2>
-}
 
+<h2>Edit Book</h2>
 
 @using (Html.BeginForm(action, controller))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Title)
         @Html.TextBoxFor(m => m.Book.Title, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Book.Title, "", new { @class = "text-danger" })
+        @Html.ValidationMessageFor(m => m.Book.Title, "Title is Required and must be 3-400 Length", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Authors)
@@ -63,22 +55,15 @@ else
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Class)
-        @if (Model.Book != null)
-        {
-            @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name", Model.Book.Class.Id), Model.Book.Class.Name, new { @class = "form-control" })
-        }
-        else
-        {
-            @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name", Model.Book.Class.Id), Model.Book.Class.Name, new { @class = "form-control" })
-        }
-        @Html.ValidationMessageFor(m => m.Book.ClassId, "", new { @class = "text-danger" })
+        @Html.DropDownListFor(m => m.Book.ClassId, new SelectList(Model.Classes, "Id", "Name", Model.Book.ClassId), "", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Book.ClassId, "Class is Required", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Language)
-        @Html.DropDownListFor(m => m.Book.Language, new SelectList(Model.Languages, "Id", "Name", Model.Book.Language.Id), Model.Book.Language.Name, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Book.LanguageId, "", new { @class = "text-danger" })
+        @Html.DropDownListFor(m => m.Book.LanguageId, new SelectList(Model.Languages, "Id", "Name", Model.Book.LanguageId), "", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Book.LanguageId, "Language is Required", new { @class = "text-danger" })
     </div>
-    @Html.ValidationSummary()
+    @Html.ValidationSummary(true, "Please Fix These Errors", new { @class="text-danger"})
     <button type="submit" class="btn btn-primary">Save</button>
     @Html.HiddenFor(m => m.Book.Id)
     @Html.HiddenFor(m => m.Book.DateAdded)

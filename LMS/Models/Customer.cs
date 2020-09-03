@@ -1,11 +1,7 @@
-﻿using FluentValidation;
-using FluentValidation.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace LMS.Models
 {
@@ -20,7 +16,7 @@ namespace LMS.Models
         [Display(Name = "Card Id")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Card Id is Required")]
         [StringLength(maximumLength: 25,MinimumLength = 4)]
-        public string StateId { get; set; }
-
+        public string CardId { get; set; }
+        public int RentalsCount { get; set; }
     }
 }

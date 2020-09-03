@@ -4,109 +4,146 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@{
+    // if i rename the controller or the action i don't have to do it here too
+    var action = nameof(LMS.Controllers.BooksController.Add);
+    var controller = nameof(LMS.Models.Book) + "s";
+}
 
 <h2>New Book</h2>
 
-<form id="newBookForm" method="post" action="/api/books">
+@using (Html.BeginForm(action, controller))
+{
     <div class="form-group">
-        @Html.LabelFor(c => c.Book.Title)
-        @Html.TextBoxFor(c => c.Book.Title, new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Book.Title)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(c => c.Book.ReleaseYear)
-        @Html.TextBoxFor(c => c.Book.ReleaseYear, new { @class = "form-control", type = "number" })
-        @Html.ValidationMessageFor(c => c.Book.ReleaseYear)
+        @Html.LabelFor(m => m.Book.Title)
+        @Html.TextBoxFor(m => m.Book.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Book.Title, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(c => c.Book.NumberInStock)
-        @Html.TextBoxFor(c => c.Book.NumberInStock, new { @class = "form-control" , type = "number"})
-        @Html.ValidationMessageFor(c => c.Book.NumberInStock)
-
+        @Html.LabelFor(m => m.Book.Authors)
+        @Html.TextBoxFor(m => m.Book.Authors, new { @class = "form-control" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Genres)
+        @Html.LabelFor(m => m.Book.Isbn)
+        @Html.TextBoxFor(m => m.Book.Isbn, new { @class = "form-control" })
     </div>
-    <div class="container-fluid">
-        <ul class="posttags">
-        </ul>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.Price)
+        @Html.TextBoxFor(m => m.Book.Price, new { @class = "form-control", type = "number" })
     </div>
-    @Html.DropDownListFor(m => m.Genres, new SelectList(Model.Genres, "Id", "Name"), "Add Genre", new { @class = "form-control"})
-    @Html.ValidationMessageFor(c => c.Genres)
-    <button type="submit" class="btn btn-primary">Create</button>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.NumberInStock)
+        @Html.TextBoxFor(m => m.Book.NumberInStock, new { @class = "form-control", type = "number" })
+        @Html.ValidationMessageFor(m => m.Book.NumberInStock, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.Publisher)
+        @Html.TextBoxFor(m => m.Book.Publisher, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.ReleaseYear)
+        @Html.TextBoxFor(m => m.Book.ReleaseYear, new { @class = "form-control", type = "number" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.Source)
+        @Html.TextBoxFor(m => m.Book.Source, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.ClassCode)
+        @Html.TextBoxFor(m => m.Book.ClassCode, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Book.ClassCode, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.Class)
+        @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name"), "Select Class", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Book.ClassId, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Book.Language)
+        @Html.DropDownListFor(m => m.Book.Language, new SelectList(Model.Languages, "Id", "Name"), "Select Language", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Book.LanguageId, "", new { @class = "text-danger" })
+    </div>
+    @Html.ValidationSummary(true, "Please Fix These Issues", new { @class="text-danger"})
+    <button type="submit" class="btn btn-primary">Add</button>
+    @Html.HiddenFor(m => m.Book.Id)
+    @Html.HiddenFor(m => m.Book.DateAdded)
     @Html.AntiForgeryToken()
-</form>
-@section scripts{
-    <script>
-        $(document).ready(function () {
-            var genres = [];// array(Genre)
-            var bookGenres = [];// array({id:int, name:string})
-            var form = $("#newBookForm");
-            @foreach(var genre in Model.Genres)
-            {
-                <text>
-                    genres.push({ id:@genre.Id, name: "@genre.Name" });
-                </text>
-            }
-            // remove genre
-            $(".posttags").on("click", "li>a>span", function (e) {
-                var li = $($(e.target).parents("li"));
-                var id = li.data("id");
-                var newarr = bookGenres.filter(i => i != id);
-                if (newarr.length != bookGenres.length) {
-                    
-                    $(`#Genres>option[value='${id}']`).show();
-                    li.remove();
-                    bookGenres = newarr;
-                    $(`#Genres`).val("");
-                }
-            });
-            // add genre
-            $("#Genres").on("change", function (e) {
-                var list = e.target;
-                var id = parseInt(list.value);
-                if (Number.isInteger(id)) {
-                    var genreName = genres.find(i => i.id == id).name;
-                    $(".posttags").append(`<li data-id="${id}"><a href="#" onclick="return false;">${genreName}<span>X</span></a></li>`)
-                    $(`#Genres>option[value='${id}']`).hide();
-                    bookGenres.push(id);
-                    $(`#Genres`).val("");
-                }
-            });
-
-            $.validator.addMethod("genres-validator", function () {
-                return bookGenres.length > 0 && bookGenres.length <= 3;
-            }, "You must Add at least 1 Genre and maximum of 3");
-            form.submit(function (e) {
-                var book = {};
-                console.log(form);
-                book.Name = $("#Book_Name").val();
-                book.ReleaseDate = $("#Book_ReleaseDate").val();;
-                book.NumberInStock = $("#Book_NumberInStock").val();
-                book.Genres = [];
-                for (var gid of bookGenres) {
-                    book.Genres.push({ Id: gid, Name: "_" });
-                }
-                console.log(book);
-                $.ajax({
-                    url: form[0].action,
-                    method: form[0].method,
-                    data: book
-                }).done(function (serverBook, b, c) {
-                    toastr.success(`Book Created <a class='toast-link' href='@Url.Action(nameof(LMS.Controllers.BooksController.Details), nameof(LMS.Models.Book) +"s")/${serverBook.id}'>View</a>`);
-                    reset
-                    form[0].reset();
-                    $(`#Genres>option:hidden`).show();
-                    @* window.location.href = window.location.protocol + "//" + window.location.host + "/books/details/" + serverBook.id;*@
-                }).fail(function (xhr, errorText, c) {
-                    console.log(xhr, errorText, c);
-                    toastr.error("Error: " + xhr.responseJSON.message);
-                });
-                return false;
-            });
-        });
-
-        
-    </script>
 }
+@Html.ActionLink("Back To List", "Index")
 
+@*
+        @section scripts{
+            <script>
+                $(document).ready(function () {
+                    var genres = [];// array(Genre)
+                    var bookGenres = [];// array({id:int, name:string})
+                    var form = $("#newBookForm");
+                    @foreach(var genre in Model.Genres)
+                    {
+                        <text>
+                            genres.push({ id:@genre.Id, name: "@genre.Name" });
+                        </text>
+                    }
+                    // remove genre
+                    $(".posttags").on("click", "li>a>span", function (e) {
+                        var li = $($(e.target).parents("li"));
+                        var id = li.data("id");
+                        var newarr = bookGenres.filter(i => i != id);
+                        if (newarr.length != bookGenres.length) {
+
+                            $(`#Genres>option[value='${id}']`).show();
+                            li.remove();
+                            bookGenres = newarr;
+                            $(`#Genres`).val("");
+                        }
+                    });
+                    // add genre
+                    $("#Genres").on("change", function (e) {
+                        var list = e.target;
+                        var id = parseInt(list.value);
+                        if (Number.isInteger(id)) {
+                            var genreName = genres.find(i => i.id == id).name;
+                            $(".posttags").append(`<li data-id="${id}"><a href="#" onclick="return false;">${genreName}<span>X</span></a></li>`)
+                            $(`#Genres>option[value='${id}']`).hide();
+                            bookGenres.push(id);
+                            $(`#Genres`).val("");
+                        }
+                    });
+
+                    $.validator.addMethod("genres-validator", function () {
+                        return bookGenres.length > 0 && bookGenres.length <= 3;
+                    }, "You must Add at least 1 Genre and maximum of 3");
+                    form.submit(function (e) {
+                        var book = {};
+                        console.log(form);
+                        book.Name = $("#Book_Name").val();
+                        book.ReleaseDate = $("#Book_ReleaseDate").val();;
+                        book.NumberInStock = $("#Book_NumberInStock").val();
+                        book.Genres = [];
+                        for (var gid of bookGenres) {
+                            book.Genres.push({ Id: gid, Name: "_" });
+                        }
+                        console.log(book);
+                        $.ajax({
+                            url: form[0].action,
+                            method: form[0].method,
+                            data: book
+                        }).done(function (serverBook, b, c) {
+                            toastr.success(`Book Created <a class='toast-link' href='@Url.Action(nameof(LMS.Controllers.BooksController.Details), nameof(LMS.Models.Book) +"s")/${serverBook.id}'>View</a>`);
+                            reset
+                            form[0].reset();
+                            $(`#Genres>option:hidden`).show();
+                            // window.location.href = window.location.protocol + "//" + window.location.host + "/books/details/" + serverBook.id;
+                    }).fail(function (xhr, errorText, c) {
+                        console.log(xhr, errorText, c);
+                        toastr.error("Error: " + xhr.responseJSON.message);
+                    });
+                    return false;
+                });
+            });
+
+
+        </script>
+    }
+
+*@

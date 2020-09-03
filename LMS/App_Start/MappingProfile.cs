@@ -14,6 +14,7 @@ namespace LMS.App_Start
         public MappingProfile()
         {
             Mapper.CreateMap<Book, Book>();
+            Mapper.CreateMap<Customer, Customer>();
         }
     }
 }

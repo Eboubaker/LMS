@@ -82,7 +82,7 @@ namespace LMS.Controllers
                 Classes = classes,
                 Languages = languages
             };
-            return View("Form", viewModel);
+            return View(viewModel);
         }
         // POST: Books/Update
         [HttpPost]
@@ -107,11 +107,10 @@ namespace LMS.Controllers
             var languages = _context.Languages.ToList();
             var viewModel = new BookFormViewModel()
             {
-                Book = new Book() { Class = new Class() { Name = "" }, Language = new Language() { Name = "" } },
                 Classes = classes,
                 Languages = languages
             };
-            return View("Form", viewModel);
+            return View(viewModel);
         }
         // Get: Books/Delete/{id}
         public ActionResult Delete(int id)
@@ -125,6 +124,7 @@ namespace LMS.Controllers
             return HttpNotFound("Can't Delete Book");
         }
 
+        // Post Books/Table/{request}
         public ActionResult Table(IDataTablesRequest request)
         {
             var filteredData = Filter(request);// Process Sorting, Searching & Paging

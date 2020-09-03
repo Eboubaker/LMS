@@ -57,5 +57,8 @@ textarea {
 .tooltip-warning {
     --balloon-color: #f0ad4e;
 }
+.pl-0, px-0{
+    padding-left:0;
+}
 
 

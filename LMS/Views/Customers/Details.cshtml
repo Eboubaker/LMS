@@ -3,8 +3,10 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{ 
-    var newsLetterSubscripedText = Model.IsSubscripedToNewsLetter ? "Yes" : "No";
+@{
+    var forCustomerAction = nameof(LMS.Controllers.RentalsController.ForCustomer);
+    var rentalsController = nameof(LMS.Models.Rental) + "s";
+    var customersController = nameof(LMS.Models.Customer) + "s";
 }
 <h2>@Model.Name</h2>
 <h4>Customer Details</h4>
@@ -14,25 +16,39 @@
         <td class="col-sm-10">@Model.Name</td>
     </tr>
     <tr>
-        <th>Subscriped To Newsletter</th>
-        <td>@newsLetterSubscripedText</td>
+        <th>Birth Date</th>
+        <td>@Model.Birthdate.Value.ToString("dd-MM-yyyy")</td>
     </tr>
     <tr>
-        <th>Discount Rate</th>
-        <td>@Model.MembershipType.DiscountRate%</td>
+        <th>Card Id</th>
+        <td>@Model.CardId</td>
     </tr>
     <tr>
-        <th>Birthdate</th>
-        <td>
-            @if (Model.Birthdate == null)
-            {
-                <text>No Data</text>
-            }
-            else {
-                @Model.Birthdate.Value.ToShortDateString()
-            }
-        </td>
+        <th>Rented Books</th>
+        @if (Model.RentalsCount > 0)
+        {
+            <td>@Html.ActionLink(@Model.RentalsCount + " Books", forCustomerAction, rentalsController)</td>
+        }
+        else
+        {
+            <td>0 Books</td>
+        }
     </tr>
 </table>
-@Html.ActionLink("Edit", "Edit", new { id = Model.Id}, new { @class = "btn btn-primary" })
+<h4>Actions</h4>
+<hr />
+<div class="row" style="margin-left:0">
+    @if (User.IsInRole(LMS.Models.Role.CanEditCustomers))
+    {
+        @Html.ActionLink("Edit", "Edit", customersController, new { id = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
+    {
+        @Html.RouteLink("Rent", new { controller = rentalsController, action = "New", customerId = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanDeleteCustomers))
+    {
+        @Html.ActionLink("Delete", "Delete", customersController, new { id = Model.Id }, new { @class = "btn btn-danger" })
+    }
+</div>
 

@@ -14,7 +14,16 @@ namespace LMS.Controllers
             return View();
         }
 
-
+        // GET: Rentals/ForCustomer/{id}
+        public ActionResult ForCustomer(int id)
+        {
+            return View();
+        }
+        // GET: Rentals/ForBook/{id}
+        public ActionResult ForBook(int id)
+        {
+            return View();
+        }
         //List<BookCopy> bookCopies = new List<BookCopy>();
         //if (book.NumberInStock - book.NumberAvailable > 0)
         //{
