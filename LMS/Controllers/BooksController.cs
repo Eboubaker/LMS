@@ -10,6 +10,9 @@ using System.Data.Entity;
 using DataTables.AspNet.Mvc5;
 using DataTables.AspNet.Core;
 using System.Web.Http.Results;
+using Glimpse.Core.Extensions;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace LMS.Controllers
 {
@@ -125,6 +128,7 @@ namespace LMS.Controllers
         }
 
         // Post Books/Table/{request}
+        [HttpPost]
         public ActionResult Table(IDataTablesRequest request)
         {
             var filteredData = Filter(request);// Process Sorting, Searching & Paging
@@ -137,36 +141,48 @@ namespace LMS.Controllers
             var data = _context.Books;
             var filteredData = data.Include(m => m.Class).Include(m => m.Language);
 
+            var title = columns.Find(m => m.Name == "Title");
+            var stock = columns.Find(m => m.Name == "NumberInStock");
+            var available = columns.Find(m => m.Name == "NumberAvailable");
+            var rented = columns.Find(m => m.Name == "RentalsCount");
             if (!String.IsNullOrWhiteSpace(request.Search.Value))
             {
                 filteredData = filteredData.Where(m => m.Title.Contains(request.Search.Value));
             }
-            if (columns[0].Sort != null)// Title
+            if (title.Sort != null)
             {
-                if (columns[0].Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.Title);
+                if (title.Sort.Direction == SortDirection.Ascending)
+                    filteredData = filteredData.OrderBy(m => m.Title).ThenByDescending(m => m.Popularity);
                 else
-                    filteredData = filteredData.OrderByDescending(m => m.Title);
+                    filteredData = filteredData.OrderByDescending(m => m.Title).ThenByDescending(m => m.Popularity);
             }
-            else if (columns[2].Sort != null)//Stock
+            else if (stock.Sort != null)
             {
-                if (columns[2].Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.NumberInStock);
+                if (stock.Sort.Direction == SortDirection.Ascending)
+                    filteredData = filteredData.OrderBy(m => m.NumberInStock).ThenByDescending(m => m.Popularity);
                 else
-                    filteredData = filteredData.OrderByDescending(m => m.NumberInStock);
+                    filteredData = filteredData.OrderByDescending(m => m.NumberInStock).ThenByDescending(m => m.Popularity);
             }
-            else if (columns[3].Sort != null)//Available
+            else if (available.Sort != null)
             {
-                if (columns[3].Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.NumberAvailable);
+                if (available.Sort.Direction == SortDirection.Ascending)
+                    filteredData = filteredData.OrderBy(m => m.NumberAvailable).ThenByDescending(m => m.Popularity);
                 else
-                    filteredData = filteredData.OrderByDescending(m => m.NumberAvailable);
+                    filteredData = filteredData.OrderByDescending(m => m.NumberAvailable).ThenByDescending(m => m.Popularity);
             }
-            else
+            else if (rented.Sort != null)
             {
-                filteredData = filteredData.OrderByDescending(m => m.Popularity);
+                if (rented.Sort.Direction == SortDirection.Ascending)
+                    filteredData = filteredData.OrderBy(m => m.RentalsCount).ThenByDescending(m => m.Popularity);
+                else
+                    filteredData = filteredData.OrderByDescending(m => m.RentalsCount).ThenByDescending(m => m.Popularity);
             }
-            return filteredData.Skip(request.Start).Take(request.Length).ToList();
+            filteredData = filteredData.Skip(request.Start);
+            if(request.Length > 0)
+            {
+                filteredData = filteredData.Take(request.Length);
+            }
+            return filteredData.ToList();
         }
     }
 }

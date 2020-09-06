@@ -15,6 +15,7 @@ namespace LMS.App_Start
         {
             Mapper.CreateMap<Book, Book>();
             Mapper.CreateMap<Customer, Customer>();
+            Mapper.CreateMap<BookCopy, BookCopy>();
         }
     }
 }

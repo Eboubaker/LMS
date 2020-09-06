@@ -1,0 +1,29 @@
+﻿@model LMS.Models.BookCopy
+@{
+    ViewBag.Title = "New Copy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>New Copy</h2>
+
+@using (Html.BeginForm("Add", "BookCopies"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Inventory.Shelf)
+        @Html.TextBoxFor(m => m.Inventory.Shelf, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Inventory.Shelf, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Inventory.Row)
+        @Html.TextBoxFor(m => m.Inventory.Row, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Inventory.Column)
+        @Html.TextBoxFor(m => m.Inventory.Column, new { @class = "form-control" })
+    </div>
+    @Html.ValidationSummary(true, "Please Fix These Issues", new { @class = "text-danger" })
+    <button type="submit" class="btn btn-primary">Add</button>
+    @Html.HiddenFor(m => m.BookId, new { value = Model.BookId})
+    @Html.HiddenFor(m => m.Rented)
+    @Html.AntiForgeryToken()
+}
+@Html.RouteLink("Back To Book", new { action ="Details", controller = "Books", id = Model.BookId})

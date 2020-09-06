@@ -222,6 +222,7 @@
     <Compile Include="Controllers\Api\CustomersController.cs" />
     <Compile Include="Controllers\Api\BooksController.cs" />
     <Compile Include="Controllers\Api\NewRentalsController.cs" />
+    <Compile Include="Controllers\BookCopiesController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -255,11 +256,60 @@
     <Compile Include="Migrations\202009031739190_customers11.Designer.cs">
       <DependentUpon>202009031739190_customers11.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009041808029_lflfl.cs" />
+    <Compile Include="Migrations\202009041808029_lflfl.Designer.cs">
+      <DependentUpon>202009041808029_lflfl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009051924466_diddji.cs" />
+    <Compile Include="Migrations\202009051924466_diddji.Designer.cs">
+      <DependentUpon>202009051924466_diddji.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009051933083_diddjisc.cs" />
+    <Compile Include="Migrations\202009051933083_diddjisc.Designer.cs">
+      <DependentUpon>202009051933083_diddjisc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009051937515_diddjiscs.cs" />
+    <Compile Include="Migrations\202009051937515_diddjiscs.Designer.cs">
+      <DependentUpon>202009051937515_diddjiscs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009051953309_diddjiscsg.cs" />
+    <Compile Include="Migrations\202009051953309_diddjiscsg.Designer.cs">
+      <DependentUpon>202009051953309_diddjiscsg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009051957104_diddj54.cs" />
+    <Compile Include="Migrations\202009051957104_diddj54.Designer.cs">
+      <DependentUpon>202009051957104_diddj54.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009052000411_diddj548.cs" />
+    <Compile Include="Migrations\202009052000411_diddj548.Designer.cs">
+      <DependentUpon>202009052000411_diddj548.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009052002597_diddj5489.cs" />
+    <Compile Include="Migrations\202009052002597_diddj5489.Designer.cs">
+      <DependentUpon>202009052002597_diddj5489.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009052016365_diddj54891.cs" />
+    <Compile Include="Migrations\202009052016365_diddj54891.Designer.cs">
+      <DependentUpon>202009052016365_diddj54891.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009052020112_diddj548sxl.cs" />
+    <Compile Include="Migrations\202009052020112_diddj548sxl.Designer.cs">
+      <DependentUpon>202009052020112_diddj548sxl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009061229444_kdvndknv.cs" />
+    <Compile Include="Migrations\202009061229444_kdvndknv.Designer.cs">
+      <DependentUpon>202009061229444_kdvndknv.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009061230212_kdvndknvp.cs" />
+    <Compile Include="Migrations\202009061230212_kdvndknvp.Designer.cs">
+      <DependentUpon>202009061230212_kdvndknvp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\BookCopy.cs" />
     <Compile Include="Models\Class.cs" />
+    <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\Misc\DataTables.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -273,6 +323,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="LMSUtils\Utils.cs" />
+    <Compile Include="ViewModels\BookCopiesListViewModel.cs" />
     <Compile Include="ViewModels\CustomerDetailsViewModel.cs" />
     <Compile Include="ViewModels\CustomerFormViewModel.cs" />
     <Compile Include="ViewModels\CustomerRentalViewModel.cs" />
@@ -656,6 +707,10 @@
     <Content Include="Seeds\MembershipTypes.json" />
     <Content Include="Views\Rentals\Index.cshtml" />
     <Content Include="Views\Books\Index.cshtml" />
+    <Content Include="Views\BookCopies\Index.cshtml" />
+    <Content Include="Views\BookCopies\ForBook.cshtml" />
+    <Content Include="Views\BookCopies\New.cshtml" />
+    <Content Include="Views\BookCopies\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.resx">
@@ -676,6 +731,42 @@
     <EmbeddedResource Include="Migrations\202009031739190_customers11.resx">
       <DependentUpon>202009031739190_customers11.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009041808029_lflfl.resx">
+      <DependentUpon>202009041808029_lflfl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009051924466_diddji.resx">
+      <DependentUpon>202009051924466_diddji.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009051933083_diddjisc.resx">
+      <DependentUpon>202009051933083_diddjisc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009051937515_diddjiscs.resx">
+      <DependentUpon>202009051937515_diddjiscs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009051953309_diddjiscsg.resx">
+      <DependentUpon>202009051953309_diddjiscsg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009051957104_diddj54.resx">
+      <DependentUpon>202009051957104_diddj54.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009052000411_diddj548.resx">
+      <DependentUpon>202009052000411_diddj548.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009052002597_diddj5489.resx">
+      <DependentUpon>202009052002597_diddj5489.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009052016365_diddj54891.resx">
+      <DependentUpon>202009052016365_diddj54891.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009052020112_diddj548sxl.resx">
+      <DependentUpon>202009052020112_diddj548sxl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009061229444_kdvndknv.resx">
+      <DependentUpon>202009061229444_kdvndknv.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009061230212_kdvndknvp.resx">
+      <DependentUpon>202009061230212_kdvndknvp.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -688,6 +779,7 @@
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

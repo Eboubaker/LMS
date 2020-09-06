@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using DataTables.AspNet.Mvc5;
 using LMS.Models;
-
+using Vidly.Models;
+using System.Data.Entity;
 namespace LMS.App_Start
 {
     public class Development
@@ -15,16 +17,57 @@ namespace LMS.App_Start
         public static void DoWork()
         {
             dostuff();
-            //Environment.Exit(0);
+            Environment.Exit(0);
         }
-
-
 
         private static void dostuff()
         {
             var context = new ApplicationDbContext();
-
         }
+
+        //private static void dostuff()
+        //{
+        //    var context = new ApplicationDbContext();
+        //    int row = 4,column = 5;
+        //    int shelf = 0;
+        //    Inventory inventory = new Inventory { Size = 0};
+        //    int size = 0;
+        //    var r = new Random((int)DateTime.Now.Ticks);
+        //    foreach(var copy in context.BookCopies.ToList())
+        //    {
+        //        if(column == 5)
+        //        {
+        //            if(row == 4)
+        //            {
+        //                shelf++;
+        //                row = 1;
+        //            }
+        //            else
+        //            {
+        //                row++;
+        //            }
+        //            column = 1;
+        //        }
+        //        if(inventory.Size == size)
+        //        {
+        //            int s = r.Next(r.Next(2, 5), r.Next(6, 10));
+        //            size = 0;
+        //            inventory = new Inventory()
+        //            {
+        //                Shelf = shelf,
+        //                Column = column,
+        //                Row = row,
+        //                Size = s
+        //            };
+        //            context.Inventories.Add(inventory);
+        //            context.SaveChanges();
+        //            column++;
+        //        }
+        //        copy.Inventory = inventory;
+        //        size++;
+        //    }
+        //    context.SaveChanges();
+        //}
 
         //private static void dostuff()
         //{

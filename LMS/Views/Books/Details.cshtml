@@ -60,14 +60,19 @@
 <h4>Actions</h4>
 <hr />
 <div class="row" style="margin-left:0">
+    @if (Model.NumberAvailable > 0 && User.IsInRole(LMS.Models.Role.CanAddRentals))
+    {
+        @Html.RouteLink("Rent", new { controller = nameof(LMS.Models.Rental) + "s", action = "New", bookId = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanAddBookCopies))
+    {
+        @Html.ActionLink("Add Copy", "New", "BookCopies", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    }
     @if (User.IsInRole(LMS.Models.Role.CanEditBooks))
     {
         @Html.ActionLink("Edit", "Edit", "Books", new { id = Model.Id }, new { @class = "btn btn-primary" })
     }
-    @if (Model.NumberAvailable > 0)
-    {
-        @Html.RouteLink("Rent", new { controller = nameof(LMS.Models.Rental) + "s", action = "New", bookId = Model.Id }, new { @class = "btn btn-primary" })
-    }
+
     @if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
     {
     }

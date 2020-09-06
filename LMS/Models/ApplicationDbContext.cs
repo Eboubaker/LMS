@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Vidly.Models;
 
 namespace LMS.Models
 {
@@ -18,6 +19,7 @@ namespace LMS.Models
         public DbSet<Rental> Rentals { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

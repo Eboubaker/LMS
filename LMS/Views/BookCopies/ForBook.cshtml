@@ -1,15 +1,15 @@
-﻿@model System.Security.Principal.IPrincipal
+﻿@model LMS.Models.Book
 @{
-    ViewBag.Title = "Books";
+    ViewBag.Title = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Available Books</h2>
+<h2>Book Copies</h2>
 <div class="container">
     <div class="row mb-2">
-        @if (Model.IsInRole(LMS.Models.Role.CanAddBooks))
+        @if (User.IsInRole(LMS.Models.Role.CanAddBookCopies))
         {
             <div class="col-sm-2">
-                @Html.ActionLink("Add Book", "New", null, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Add Copy", "New", null, new { @class = "btn btn-primary" })
             </div>
         }
     </div>
@@ -23,63 +23,68 @@
             var table = $("#js-books-table").DataTable({
                 serverSide: true,
                 autoWidth: true,
-                processing:true,
+                processing: true,
+
+
                 ajax: {
-                    url: "/books/table",
+                    url: "/bookcopies/table",
                     method: "POST",
-                    dataSrc: "data"
+                    dataSrc: "data",
+                    "data": function (d) {
+                        d.bookId =@Model.Id
+                    }
                 },
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                 columns: [
                     {
-                        title: "Title",
-                        name:"Title",
-                        render: function (_, _, book) {
-                            return `<a href='/books/details/${book.id}' title='View This Book'> ${book.title} </a>`;
-                        }
+                        title: "Location - Shelf",
+                        name: "Shelf",
+                        data: "inventory.shelf",
+                        searchable: false
                     },
                     {
-                        title: "Class",
-                        data: "class.name",
-                        searchable: false,
-                        orderable:false
+                        title: "Location - Column",
+                        name: "Column",
+                        data: "inventory.column",
+                        searchable: false
                     },
                     {
-                        title: "Stock",
-                        name:"NumberInStock",
-                        data: "numberInStock",
-                        searchable: false,
-                        render: function (_, _, book) {
-                            return `<a href="/bookcopies/forbook/${book.id}">${book.numberInStock} Copies</a>`;
-                        }
+                        title: "Location - Row",
+                        name: "Row",
+                        data: "inventory.row",
+                        searchable:false
                     },
                     {
                         title: "Rented",
-                        name: "RentalsCount",
-                        data: "rentalsCount",
-                        searchable: false
-                    },
-                    {
-                        title: "Available",
-                        name:"NumberAvailable",
-                        data: "numberAvailable",
-                        searchable: false
+                        name: "Rented",
+                        data: "rented",
+                        searchable: false,
+                        render: function (rented,_, copy) {
+                            if (rented)
+                                `<a href="/rentals/ForCopy/${copy.id}">Rented</a>`;
+                            return "No";
+                        }
                     },
                     {
                         title: "Actions",
                         data: "id",
                         orderable: false,
-                        render: function (bookId) {
-                            var edit = remove = "";
-                            @if (Model.IsInRole(LMS.Models.Role.CanAddBooks))
+                        searchable:false,
+                        render: function (copyId) {
+                            var edit = remove = rent = "";
+                            @if (User.IsInRole(LMS.Models.Role.CanEditBookCopies))
                             {
-                                <text>edit = `<a href="/books/edit/${bookId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
+                                <text>edit = `<a href="/bookcopies/edit/${copyId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
                             }
-                            @if (Model.IsInRole(LMS.Models.Role.CanDeleteBooks))
+                            @if (User.IsInRole(LMS.Models.Role.CanDeleteBookCopies))
                             {
-                                <text>remove = `<a href="#" data-book-id='${bookId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                <text>remove = `<a href="#" data-book-id='${copyId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
                             }
-                            return `<span style="display:flex">${edit} ${remove}</span>`;
+                            @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
+                            {
+                                <text>rent = `<a href="/rentals/forcopy/${copyId}" class='mx-1 btn btn-primary'>Rent</a>`</text>
+                            }
+                            return `<span style="display:flex">${rent} ${edit} ${remove}</span>`;
                         }
                     }
                 ]
@@ -100,7 +105,7 @@
                 });*@
                 bootbox.dialog({
                     title: "Confirm Your Action",
-                    message: '<span>Delete <strong>" ' + button.parents('tr').children().first().find("a").text() + '"</strong> ?</span>',
+                    message: '<span>Delete Book Copy?</span>',
                     backdrop:true,
                     buttons: {
                         confirm: {
@@ -108,11 +113,12 @@
                             className: 'btn-danger',
                             callback: function () {
                                 $.ajax({
-                                    url: "/books/delete/" + button.data("book-id"),
+                                    url: "/bookcopies/delete/" + button.data("book-id"),
                                     method: "POST",
                                     success: function () {
                                         table.row(button.parents('tr')).remove().draw();
-                                        toastr.success("Book Removed!");
+                                        toastr.success("Book Copy Removed!");
+                                        console.log("Yeeeeeeees");
                                     }
                                 })
                             }
@@ -124,7 +130,7 @@
                                 console.log("you piece of shit, why");
                             }
                         }
-                        
+
                     },
                     onEscape: function () {
                         console.log("help welp melp");

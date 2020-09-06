@@ -32,5 +32,7 @@ namespace LMS.Models
         public int LanguageId { get; set; }
         public Language Language { get; set; }
         public float Popularity { get; set; }
+        public int RentalsCount { get; set; }
+        public List<BookCopy> BookCopys { get; set; }
     }
 }
