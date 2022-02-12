@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Web.Http;
 using LMS.Models;
 using System.Data.Entity;
-using Vidly.Models;
+using LMS.Models;
 using Microsoft.Ajax.Utilities;
 using Glimpse.Mvc.AlternateType;
 using System.Web.Http.Results;
@@ -19,10 +19,10 @@ namespace LMS.Controllers.Api
 {
     public class BooksController : ApiController
     {
-        public ApplicationDbContext _context { get; set; }
+        public LibraryManagmentContext _context { get; set; }
         public BooksController()
         {
-            _context = new ApplicationDbContext();
+            _context = new LibraryManagmentContext();
         }
 
         // GET /api/books
@@ -81,7 +81,6 @@ namespace LMS.Controllers.Api
             if(!User.IsInRole(Role.CanAddBooks))
                 return BadRequest("Not Authorized");
             book.DateAdded = DateTime.Now;
-            book.NumberAvailable = book.NumberInStock;
             _context.Books.Add(book);
             _context.SaveChanges();
             var createdUri = new Uri(Request.RequestUri.Scheme + "://" + Request.RequestUri.Authority + "/books/details" + book.Id);

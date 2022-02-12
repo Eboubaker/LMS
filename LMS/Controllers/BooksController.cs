@@ -19,10 +19,14 @@ namespace LMS.Controllers
     [Authorize]
     public class BooksController : Controller
     {
-        ApplicationDbContext _context;
+        private readonly LibraryManagmentContext _context;
         public BooksController()
         {
-            _context = new ApplicationDbContext();
+            _context = new LibraryManagmentContext();
+        }
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
         }
         // GET: Books/Random
         public ActionResult Random()
@@ -37,7 +41,7 @@ namespace LMS.Controllers
         // GET: Books/
         public ActionResult Index()
         {
-            return View(User);
+            return View();
         }
 
         // GET: Books/Details/{id}
@@ -46,10 +50,12 @@ namespace LMS.Controllers
             var book = _context.Books
                 .Include(m => m.Class)
                 .Include(m => m.Language)
+                .Include(m => m.Rentals)
+                .Include(m => m.BookCopys)
                 .SingleOrDefault(c => c.Id == id);
             if(book == null)
             {
-                return HttpNotFound("ID not Found");
+                return Content("ID not Found");
             }
             return View(book);
         }
@@ -58,16 +64,17 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(Book book)
         {
-            if (!ModelState.IsValid)
-            {
-                return HttpNotFound("Invalid Model State");
-            }
+            book.DateAdded = DateTime.Now;
+            //if (!ModelState.IsValid)
+            //{
+            //    return Content("Invalid Model State");
+            //}
             _context.Books.Add(book);
             if (_context.SaveChanges() > 0)
             {
                 return RedirectToAction("Details", new { id = book.Id});
             }
-            return HttpNotFound("Can't Add Book");
+            return Content("Can't Add Book");
         }
         // Get: Books/Edit/{id}
         public ActionResult Edit(int id)
@@ -75,7 +82,7 @@ namespace LMS.Controllers
             var book = _context.Books.Include(m => m.Class).Include(m => m.Language).SingleOrDefault(m => m.Id == id);
             if(book == null)
             {
-                return HttpNotFound("ID Not Found");
+                return Content("ID Not Found");
             }
             var classes = _context.Classes.ToList();
             var languages = _context.Languages.ToList();
@@ -95,13 +102,13 @@ namespace LMS.Controllers
             var bookInDb = _context.Books.SingleOrDefault(m => m.Id == book.Id);
             if (bookInDb == null)
             {
-                return HttpNotFound("ID Not Found");
+                return Content("ID Not Found");
             }
             Mapper.Map(book, bookInDb);
             //bookInDb.Price = book.Price;
             if(_context.SaveChanges() > 0)
                 return RedirectToAction("Index");
-            return HttpNotFound("Can't Save Book");
+            return Content("Can't Save Book");
         }
         // Get: Books/New/
         public ActionResult New()
@@ -115,39 +122,45 @@ namespace LMS.Controllers
             };
             return View(viewModel);
         }
-        // Get: Books/Delete/{id}
+        // Post: Books/Delete/{id}
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             var book = _context.Books.Find(id);
             if (book == null)
-                return HttpNotFound("ID Not Found");
+                return Json(new { success = false, error = "Book #" + id + " not found" }, JsonRequestBehavior.AllowGet);
             _context.Books.Remove(book);
-            if (_context.SaveChanges() > 0)
-                return Json(new { success = true, action = "Deleted" });
-            return HttpNotFound("Can't Delete Book");
+            if (_context.SaveChanges() == 0)
+                return Json(new { success = false, message = "can't remove Book #" + id}, JsonRequestBehavior.AllowGet);
+            return Json(new { success = false, message = "Book #" + id + "was removed"}, JsonRequestBehavior.AllowGet);
         }
-
+        public ActionResult Choose(int? customerId)
+        {
+            var model = new NewRentalViewModel();
+            if (customerId.HasValue)
+            {
+                model.CustomerId = customerId.Value;
+            }
+            return View("Index", model);
+        }
         // Post Books/Table/{request}
         [HttpPost]
         public ActionResult Table(IDataTablesRequest request)
         {
-            var filteredData = Filter(request);// Process Sorting, Searching & Paging
-            var response = DataTablesResponse.Create(request, filteredData.Count(), _context.Books.Count(), filteredData);
-            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
-        }
-        private List<Book> Filter(IDataTablesRequest request)
-        {
             var columns = request.Columns as List<IColumn>;
             var data = _context.Books;
-            var filteredData = data.Include(m => m.Class).Include(m => m.Language);
-
+            var filteredData = data.Include(m => m.Class).Include(m => m.Rentals).Include(m => m.BookCopys);
+            int count = data.Count();
             var title = columns.Find(m => m.Name == "Title");
             var stock = columns.Find(m => m.Name == "NumberInStock");
             var available = columns.Find(m => m.Name == "NumberAvailable");
             var rented = columns.Find(m => m.Name == "RentalsCount");
+            var sorted = false;
+            IEnumerable<Book> filteredList = new List<Book>();
             if (!String.IsNullOrWhiteSpace(request.Search.Value))
             {
                 filteredData = filteredData.Where(m => m.Title.Contains(request.Search.Value));
+                count = filteredData.Count();
             }
             if (title.Sort != null)
             {
@@ -155,34 +168,49 @@ namespace LMS.Controllers
                     filteredData = filteredData.OrderBy(m => m.Title).ThenByDescending(m => m.Popularity);
                 else
                     filteredData = filteredData.OrderByDescending(m => m.Title).ThenByDescending(m => m.Popularity);
-            }
-            else if (stock.Sort != null)
-            {
-                if (stock.Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.NumberInStock).ThenByDescending(m => m.Popularity);
-                else
-                    filteredData = filteredData.OrderByDescending(m => m.NumberInStock).ThenByDescending(m => m.Popularity);
-            }
-            else if (available.Sort != null)
-            {
-                if (available.Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.NumberAvailable).ThenByDescending(m => m.Popularity);
-                else
-                    filteredData = filteredData.OrderByDescending(m => m.NumberAvailable).ThenByDescending(m => m.Popularity);
+                sorted = true;
             }
             else if (rented.Sort != null)
             {
                 if (rented.Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.RentalsCount).ThenByDescending(m => m.Popularity);
+                    filteredData = filteredData.OrderBy(m => m.Rentals.Count).ThenByDescending(m => m.Popularity);
                 else
-                    filteredData = filteredData.OrderByDescending(m => m.RentalsCount).ThenByDescending(m => m.Popularity);
+                    filteredData = filteredData.OrderByDescending(m => m.Rentals.Count).ThenByDescending(m => m.Popularity);
+                sorted = true;
             }
-            filteredData = filteredData.Skip(request.Start);
-            if(request.Length > 0)
+            filteredList = filteredData.AsEnumerable<Book>();
+            if (!sorted)
             {
-                filteredData = filteredData.Take(request.Length);
+                
+                if (stock.Sort != null)
+                {
+                    if (stock.Sort.Direction == SortDirection.Ascending)
+                        filteredList = filteredList.OrderBy(m => m.NumberInStock).ThenByDescending(m => m.Popularity);
+                    else
+                        filteredList = filteredList.OrderByDescending(m => m.NumberInStock).ThenByDescending(m => m.Popularity);
+                }
+                else if (available.Sort != null)
+                {
+                    if (available.Sort.Direction == SortDirection.Ascending)
+                        filteredList = filteredList.OrderBy(m => m.NumberAvailable).ThenByDescending(m => m.Popularity);
+                    else
+                        filteredList = filteredList.OrderByDescending(m => m.NumberAvailable).ThenByDescending(m => m.Popularity);
+                }
             }
-            return filteredData.ToList();
+            filteredList = filteredList.Skip(request.Start);
+            if (request.Length > 0)
+            {
+                filteredList = filteredList.Take(request.Length);
+            }
+            var fl = filteredList.ToList();
+            fl.ForEach(m =>
+            {
+                m.BookCopys = Enumerable.Repeat(new BookCopy(), m.BookCopys.Count).ToList();
+                m.Rentals = Enumerable.Repeat(new Rental(), m.Rentals.Count).ToList();
+            });
+            filteredList = fl;
+            var response = DataTablesResponse.Create(request, filteredList.Count(), count, filteredList);
+            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
         }
     }
 }

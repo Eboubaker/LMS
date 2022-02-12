@@ -8,23 +8,23 @@ using LMS.Models;
 using AutoMapper;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
-
+using System.Data.Entity;
 namespace LMS.Controllers
 {
     public class CustomersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly LibraryManagmentContext _context;
 
         public CustomersController()
         {
-            _context = new ApplicationDbContext();
+            _context = new LibraryManagmentContext();
         }
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
         }
 
-
+        #region Pages
         // GET: Customers
         public ActionResult Index()
         {
@@ -33,7 +33,7 @@ namespace LMS.Controllers
         // GET: Customers/Details/{id}
         public ActionResult Details(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customer = _context.Customers.Include(m => m.Rentals).SingleOrDefault(c => c.Id == id);
             if(customer == null)
             {
                 return HttpNotFound();
@@ -54,24 +54,18 @@ namespace LMS.Controllers
             {
                 return HttpNotFound("Customer Not Found");
             }
-            var customerForEdit = new CustomerFormViewModel()
-            {
-                Customer = customer,
-            };
-            return View(customerForEdit);
+            return View(customer);
         }
+        #endregion
 
+        #region Modifiers
         // POST: Customers/Add
         [HttpPost]
         public ActionResult Add(Customer customer)
         {
             if (!ModelState.IsValid)
             {
-                var customerForEdit = new CustomerFormViewModel()
-                {
-                    Customer = customer,
-                };
-                return View(customerForEdit);
+                return View("New", customer);
             }
             customer = _context.Customers.Add(customer);
             if (_context.SaveChanges() > 0)
@@ -86,11 +80,7 @@ namespace LMS.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var customerForEdit = new CustomerFormViewModel()
-                {
-                    Customer = customer,
-                };
-                return View(customerForEdit);
+                return View("edit", customer);
             }
             var customerInDb = _context.Customers.SingleOrDefault(m => m.Id == customer.Id);
             if (customerInDb == null)
@@ -108,55 +98,79 @@ namespace LMS.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customer = _context.Customers.Include(m => m.Rentals).SingleOrDefault(c => c.Id == id);
             if (customer == null)
             {
-                return HttpNotFound("Customer Not Found");
+                return Json(new { success = false , error="Customer #"+id+" not found"});
+            }
+            if(customer.Rentals.Count > 0)
+            {
+                return Json(new { success = false, error = "Put Back all rentals first, <a style='color:yellow !important;' href='/rentals/forcustomer/"+id+"'>View</a>" });
             }
             _context.Customers.Remove(customer);
             if (_context.SaveChanges() > 0)
             {
-                return Json(new { success = true});
+                return Json(new { success = true, message="Customer #" + id + " was removed"});
             }
-            return HttpNotFound("Failed to Delete Customer");
+            return Json(new { success = false, error = "Failed to delete customer #" + id});
         }
+        #endregion
+
+        #region Misc
+        public ActionResult Choose(int? bookId, int? copyId)
+        {
+            var model = new NewRentalViewModel();
+            if (bookId.HasValue)
+                model.BookId = bookId.Value;
+            if (copyId.HasValue)
+            {
+                model.CopyId = copyId.Value;
+            }
+            return View("Index", model);
+        }
+        #endregion
+
         #region DataTables
         // Post Customers/Table/{request}
+        [HttpPost]
         public ActionResult Table(IDataTablesRequest request)
-        {
-            var filteredData = Filter(request);// Process Sorting, Searching & Paging
-            var response = DataTablesResponse.Create(request, filteredData.Count(), _context.Customers.Count(), filteredData);
-            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
-        }
-        private List<Customer> Filter(IDataTablesRequest request)
         {
             var columns = request.Columns as List<IColumn>;
             var data = _context.Customers;
-            var filteredData = data.AsQueryable();
-
+            var filteredData = data.Include(m => m.Rentals);
+            int count = data.Count();
+            var name = columns.Find(m => m.Name == "Name");
+            var rented = columns.Find(m => m.Name == "RentalsCount");
             if (!String.IsNullOrWhiteSpace(request.Search.Value))
             {
                 filteredData = filteredData.Where(m => m.Name.Contains(request.Search.Value));
+                count = filteredData.Count();
             }
-            if (columns[0].Sort != null)// Title
+            if (name.Sort != null)
             {
-                if (columns[0].Sort.Direction == SortDirection.Ascending)
+                if (name.Sort.Direction == SortDirection.Ascending)
                     filteredData = filteredData.OrderBy(m => m.Name);
                 else
                     filteredData = filteredData.OrderByDescending(m => m.Name);
             }
-            else if (columns[2].Sort != null)//Stock
+            else if (rented.Sort != null)
             {
-                if (columns[2].Sort.Direction == SortDirection.Ascending)
-                    filteredData = filteredData.OrderBy(m => m.Birthdate);
+                if (rented.Sort.Direction == SortDirection.Ascending)
+                    filteredData = filteredData.OrderBy(m => m.Rentals.Count);
                 else
-                    filteredData = filteredData.OrderByDescending(m => m.Birthdate);
+                    filteredData = filteredData.OrderByDescending(m => m.Rentals.Count);
             }
-            else
+            filteredData = filteredData.Skip(request.Start);
+            if (request.Length > 0)
             {
-                filteredData = filteredData.OrderByDescending(m => m.Name);
+                filteredData = filteredData.Take(request.Length);
             }
-            return filteredData.Skip(request.Start).Take(request.Length).ToList();
+            var filteredList = filteredData.ToList();
+            filteredList.ForEach(m => {
+                m.Rentals = Enumerable.Repeat(new Rental(), m.Rentals.Count).ToList();
+            });
+            var response = DataTablesResponse.Create(request, filteredList.Count(), count, filteredList);
+            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
         }
         #endregion
     }

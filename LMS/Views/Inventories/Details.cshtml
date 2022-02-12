@@ -1,0 +1,56 @@
+﻿@model LMS.Models.Inventory
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h3>Inventory Details</h3>
+<table class="table table-responsive table-bordered">
+    <tr>
+        <th class="col-sm-2">Shelf</th>
+        <td class="col-sm-10">@Model.Shelf</td>
+    </tr>
+    <tr>
+        <th>Column</th>
+        <td>@Model.Column</td>
+    </tr>
+    <tr>
+        <th>Row</th>
+        <td>@Model.Row</td>
+    </tr>
+    <tr>
+        <th>Size</th>
+        <td>@Model.Size</td>
+    </tr>
+    <tr>
+        <th>Stored Copies</th>
+        <td>
+            @if (Model.BookCopys.Count == 1)
+            {
+                <a href="/bookcopies/forinventory/@Model.Id">1 Copy</a>
+            }
+            else if (Model.BookCopys.Count > 0){
+                <a href="/bookcopies/forinventory/@Model.Id">@Model.BookCopys.Count Copies</a>
+            }else
+            {
+                <text>0 Copies</text>
+            }
+        </td>
+    </tr>
+</table>
+<h4>Actions</h4>
+<hr />
+<div class="row" style="margin-left:0">
+    @if (User.IsInRole(LMS.Models.Role.CanEditInventories))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanDeleteInventories) && Model.BookCopys.Count == 0)
+    {
+        @Html.ActionLink("Delete", "Delete" , new { id = Model.Id }, new { @class = "btn btn-danger" })
+    }
+    @if (Model.BookCopys.Count != 0)
+    {
+        <button  title="Inventory must be empty first" class="btn btn-primary" disabled>Delete</button>
+    }
+</div>
+

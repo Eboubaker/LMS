@@ -1,0 +1,54 @@
+﻿@model LMS.Models.BookCopy
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Copy Details</h2>
+<table class="table table-responsive table-bordered">
+    <tr class="d-flex">
+        <th class="col-sm-2">Title</th>
+        <td class="col-sm-10">@Html.RouteLink(Model.Book.Title, new { controller = "books", action = "details", id = Model.BookId })</td>
+    </tr>
+    <tr>
+        <th>Shelf</th>
+        <td>@Model.Inventory.Shelf</td>
+    </tr>
+    <tr>
+        <th>Column</th>
+        <td>@Model.Inventory.Column</td>
+    </tr>
+    <tr>
+        <th>Row</th>
+        <td>@Model.Inventory.Row</td>
+    </tr>
+    <tr>
+        <th>Rented</th>
+        <td>
+            @if (Model.Rented)
+            {
+                <a title="Customer#@Model.Customer.CardId (@Model.Customer.Name)" href="/rentals/forcopy/@Model.Id">Rented</a>
+            }
+            else
+            {
+                <text>No</text>
+            }
+        </td>
+    </tr>
+</table>
+<h4>Actions</h4>
+<hr />
+<div class="row" style="margin-left:0">
+    @if (User.IsInRole(LMS.Models.Role.CanEditCustomers))
+    {
+        @Html.ActionLink("Edit", "Edit", "customers", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
+    {
+        @Html.RouteLink("Rent", new { controller = "rentals", action = "New", copyId = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    @if (User.IsInRole(LMS.Models.Role.CanDeleteCustomers))
+    {
+        @Html.ActionLink("Delete", "Delete", "customers", new { id = Model.Id }, new { @class = "btn btn-danger" })
+    }
+</div>
+

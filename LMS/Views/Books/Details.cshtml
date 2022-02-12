@@ -3,10 +3,7 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{
-    var rented = Model.NumberInStock - Model.NumberAvailable;
 
-}
 <br /><br />
 <h4>Book Details</h4>
 <table class="table table-responsive table-bordered">
@@ -48,38 +45,54 @@
             }
             else
             {
-                @Model.NumberInStock
+                if (Model.NumberInStock > 1)
+                {
+                    <a href="/bookcopies/forbook/@Model.Id">@Model.NumberInStock Copies</a>
+                }
+                else
+                {
+                    <a href="/bookcopies/forbook/@Model.Id">1 Copy</a>
+                }
             }
         </td>
     </tr>
     <tr>
         <th>Rented</th>
-        <td>@rented</td>
+        <td>
+            @if (Model.RentalsCount > 0)
+            {
+                if (Model.RentalsCount > 1)
+                {
+                    <a href="/rentals/forbook/@Model.Id">@Model.RentalsCount Copies</a>
+                }
+                else {
+                    <a href="/rentals/forbook/@Model.Id">1 Copy</a>
+                }
+            }
+            else
+            {
+                <text>0</text>
+            }
+        </td>
     </tr>
 </table>
 <h4>Actions</h4>
 <hr />
 <div class="row" style="margin-left:0">
-    @if (Model.NumberAvailable > 0 && User.IsInRole(LMS.Models.Role.CanAddRentals))
+    @if (Model.NumberAvailable > 0 && User.IsInRole(LMS.Models.Role.CanAddRentals) && Model.NumberAvailable > 0)
     {
-        @Html.RouteLink("Rent", new { controller = nameof(LMS.Models.Rental) + "s", action = "New", bookId = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.RouteLink("Rent", new { controller = "bookcopies", action = "choose", bookId = Model.Id }, new { @class = "btn btn-primary" })
     }
     @if (User.IsInRole(LMS.Models.Role.CanAddBookCopies))
     {
-        @Html.ActionLink("Add Copy", "New", "BookCopies", new { id = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Add Copy", "New", "BookCopies", new { id = Model.Id }, new { @class = "btn btn-" + (Model.NumberAvailable > 0 ? "primary" : "success") })
     }
     @if (User.IsInRole(LMS.Models.Role.CanEditBooks))
     {
         @Html.ActionLink("Edit", "Edit", "Books", new { id = Model.Id }, new { @class = "btn btn-primary" })
-    }
-
-    @if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
-    {
     }
     @if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
     {
         @Html.ActionLink("Delete", "Delete", "Books", new { id = Model.Id }, new { @class = "btn btn-danger" })
     }
 </div>
-
-

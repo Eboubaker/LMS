@@ -1,0 +1,98 @@
+﻿@model LMS.Models.Inventory
+@{
+    ViewBag.Title = "Inventories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h3>Library Inventory</h3>
+<div class="container">
+    <div class="row mb-2">
+        @if (User.IsInRole(LMS.Models.Role.CanAddInventories))
+        {
+            <div class="col-sm-2 pl-0">
+                @Html.ActionLink("Add Inventory", "New", null, new { @class = "btn btn-primary" })
+            </div>
+        }
+    </div>
+</div>
+
+<table class="table table-bordered" id="js-inventories-table"></table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#js-inventories-table").DataTable({
+                serverSide: true,
+                autoWidth: true,
+                processing: true,
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> ',
+                    searchPlaceholder: "Shelf/Column/Row",
+                    emptyTable: `No data. Make sure you use the pattern '<span class="text-success" style="font-weight:boldS">Shelf/Column/Row</span>' for searching`
+                },
+                ajax: {
+                    url: "/inventories/table",
+                    method: "POST",
+                    dataSrc: "data",
+                    @*"data": function (d) {
+                        d.inventoryId = @Model.Id;
+                    }*@
+                },
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                columns: [
+                    {
+                        title: "Location - Shelf",
+                        name: "Shelf",
+                        data: "shelf",
+                        searchable: false
+                    },
+                    {
+                        title: "Location - Column",
+                        name: "Column",
+                        data: "column",
+                        searchable: false
+                    },
+                    {
+                        title: "Location - Row",
+                        name: "Row",
+                        data: "row",
+                        searchable:false
+                    },
+                    {
+                        title: "Size",
+                        name: "Size",
+                        data: "size",
+                        searchable: false,
+                        render: (size) => size + " Copies"
+                    },
+                    {
+                        title: "Stored Copies",
+                        name: "Copies",
+                        searchable: false,
+                        render: function (_, _, inventory) {
+                            if (inventory.bookCopys.length == 1) {
+                                return `<a href="/bookcopies/forinventory/${inventory.id}">1 Copy</a>`;
+                            } else if (inventory.bookCopys.length <= 0) {
+                                return "No Copies";
+                            } else {
+                                return `<a href="/bookcopies/forinventory/${inventory.id}">${inventory.bookCopys.length} Copies</a>`;
+                            }
+                        }
+                    },
+                    {
+                        title: "Actions",
+                        data: "id",
+                        orderable: false,
+                        searchable: false,
+                        width:1,
+                        render: function (InventoryId,_,copy) {
+                            var actions = "";
+                            actions += `<a href="/inventories/details/${InventoryId}" class="mx-1 btn btn-primary">View</a>`;
+                            return `<span style="display:flex;">${actions}</span>`;
+                        }
+                    }
+                ],
+                order:[[4, "asc"]]
+            });
+        });
+    </script>
+}

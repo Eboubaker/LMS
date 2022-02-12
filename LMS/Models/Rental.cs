@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -12,10 +14,12 @@ namespace LMS.Models
         public int BookCopyId { get; set; }
         public int BookId { get; set; }
         public DateTime Created { get; set; }
-
+        public DateTime Expires { get; set; }
 
         public Customer Customer { get; set; }
         public BookCopy BookCopy { get; set; }
         public Book Book { get; set; }
+        [NotMapped]
+        public int RemainingDays => Expires.Subtract(DateTime.Now).Days;
     }
 }

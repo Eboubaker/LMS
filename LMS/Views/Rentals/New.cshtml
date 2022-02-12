@@ -1,118 +1,85 @@
-﻿
+﻿@model LMS.ViewModels.NewRentalViewModel
 @{
     ViewBag.Title = "New Rental";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>New Rental</h2>
-
-<form id="newRentalForm">
-    <div class="form-group">
-        <label>Customer</label>
-        <div class="tt-container">
-            <input id="js-customer" name="customer" data-rule-customer-validator="true" required class="form-control" />
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>Book Copy</h4>
+        </div>
+        <div class="col-sm-6">
+            <h4>Customer</h4>
         </div>
     </div>
-    <div class="form-group">
-        <label>Book</label>
-        <div class="tt-container">
-            <input id="js-book" name="book" data-rule-books-validator="true" class="form-control" />
+    <div class="row">
+        <div class="col-sm-6">
+            @if(Model.Copy != null)
+            {
+                <table class="table table-condensed">
+                    <tr>
+                        <th>Copy Id</th>
+                        <td>@Model.Copy.Id</td>
+                    </tr>
+                    <tr>
+                        <th>Title</th>
+                        <td>@Model.Copy.Book.Title</td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div class="col-sm-6">
+            @if (Model.Customer != null)
+            {
+                <table class="table table-condensed">
+                    <tr>
+                        <th>Card Id</th>
+                        <td>@Model.Customer.CardId</td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td>@Model.Customer.Name</td>
+                    </tr>
+                </table>
+            }
         </div>
     </div>
-    <button type="submit" class="btn btn-primary">Rent</button>
-</form>
-<div class="row">
-    <div class="col-md-4">
-        <ul id="books" class="list-group my-2"></ul>
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.RouteLink(Model.CopyId.HasValue ? "Change" : "Choose", new { controller = "books", action = "choose", customerId = Model.CustomerId }, new { @class = "btn btn-primary my-2" })
+        </div>
+        <div class="col-sm-6">
+            @Html.RouteLink(Model.CustomerId.HasValue ? "Change" : "Choose", new { controller = "customers", action = "choose", bookId = Model.BookId, copyId = Model.CopyId }, new { @class = "btn btn-primary my-2" })
+        </div>
     </div>
 </div>
-
-
-@section scripts{
-    <script>
-        @* view model *@
-        var vm = {
-            customerId:null,
-            bookIds:[]
-        };
-        $(document).ready(function () {
-
-            var customers = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                @* prefetch: '../data/films/post_1960.json',*@
-                remote: {
-                    url: '/api/customers?query=%QUERY',
-                    wildcard: '%QUERY'
-                }
-            });
-
-            $('#js-customer').typeahead({
-                minLength: 2,
-                highlight: true
-            }
-                , {
-                    name: 'customers',
-                    display: 'name',
-                    source: customers
-                }).on("typeahead:select", function (e, customer) {
-                    vm.customerId = customer.id;
-                });
-
-
-            var books = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    url: '/api/books?query=%QUERY',
-                    wildcard: '%QUERY'
-                }
-            });
-            $('#js-book').typeahead({
-                minLength: 2,
-                highlight: true
-            },
-                {
-                    name: 'books',
-                    display: 'name',
-                    source: books
-                }).on("typeahead:select", function (e, book) {
-                    $("#books").append($("<li>").text(book.name).addClass("list-group-item"));
-                    vm.bookIds.push(book.id);
-                });
-            $.validator.addMethod("customer-validator", function () {
-                return vm.customerId && vm.customerId != 0;
-            }, "Please Select a valid Customer");
-            $.validator.addMethod("books-validator", function () {
-                return vm.bookIds.length != 0 && !vm.bookIds.some(i => !Number.isInteger(i));
-            }, "Please Select at least 1 valide book");
-
-            var validator = $("#newRentalForm").validate({
-                onkeyup: false,
-                onclick: false,
-                submitHandler: function () {
-                    $.ajax({
-                        url: "/api/newRentals",
-                        method: "post",
-                        data: vm
-                    }).done(function () {
-                        toastr.success("Succussfully Rented books")
-                    })
-                        .fail(function () {
-                            toastr.error("Something unexpected Happened");
-                        });
-                    $("#customers").typeahead("val", "");
-                    $("#js-book").typeahead("val", "");
-                    $("#books").empty();
-                    validator.resetForm();
-                    vm = {
-                        customerId : null,
-                        bookIds : []
-                    }
-                    return false;
-                }
-            });
-        });
-    </script>
-    
+<hr />
+@if (Model.Copy != null && Model.Customer != null)
+{
+    <h4>Copy Location</h4>
+    <table class="table table-responsive table-bordered">
+        <tr class="d-flex">
+            <th class="col-sm-2">Shelf</th>
+            <td class="col-sm-10">@Model.Copy.Inventory.Shelf</td>
+        </tr>
+        <tr>
+            <th>Column</th>
+            <td>@Model.Copy.Inventory.Column</td>
+        </tr>
+        <tr>
+            <th>Row</th>
+            <td>@Model.Copy.Inventory.Row</td>
+        </tr>
+    </table>
+    <form method="get" action="/rentals/add">
+        <div class="form-group">
+            <label class="h4">Rental Duration (Days)</label>
+            <input value="15" type="number" min="1" class="form-control" name="duration" />
+        </div>
+        <input name="copyId" value="@Model.CopyId.Value" hidden />
+        <input name="customerId" value="@Model.CustomerId.Value" hidden />
+        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Confirm</button>
+    </form>
 }

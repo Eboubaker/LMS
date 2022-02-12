@@ -34,34 +34,15 @@ namespace LMS.Models
         public const string CanAddBookCopies = "CanAddBookCopies";
         public const string CanEditBookCopies = "CanEditBookCopies";
         public const string CanDeleteBookCopies = "CanDeleteBookCopies";
-        private static FieldInfo[] GetConstants(System.Type type)
+
+        public const string CanViewInventories = "CanViewInventories";
+        public const string CanAddInventories = "CanAddInventories";
+        public const string CanEditInventories = "CanEditInventories";
+        public const string CanDeleteInventories = "CanDeleteInventories";
+        public static async Task AddSuperAdminRoles(RoleManager<IdentityRole> manager, ApplicationUserManager userManager, ApplicationUser user)
         {
-            ArrayList constants = new ArrayList();
+            await AddToRole(CanModifyRoles, manager, userManager, user);
 
-            FieldInfo[] fieldInfos = type.GetFields(
-                // Gets all public and static fields
-
-                BindingFlags.Public | BindingFlags.Static |
-                // This tells it to get the fields from all base types as well
-
-                BindingFlags.FlattenHierarchy);
-
-            // Go through the list and only pick out the constants
-            foreach (FieldInfo fi in fieldInfos)
-                // IsLiteral determines if its value is written at 
-                //   compile time and not changeable
-                // IsInitOnly determines if the field can be set 
-                //   in the body of the constructor
-                // for C# a field which is readonly keyword would have both true 
-                //   but a const field would have only IsLiteral equal to true
-                if (fi.IsLiteral && !fi.IsInitOnly)
-                    constants.Add(fi);
-
-            // Return an array of FieldInfos
-            return (FieldInfo[])constants.ToArray(typeof(FieldInfo));
-        }
-        public static async Task<bool> AddSuperAdminRoles(RoleManager<IdentityRole> manager, ApplicationUserManager userManager, ApplicationUser user)
-        {
             await AddToRole(CanEditBooks, manager, userManager, user);
             await AddToRole(CanAddBooks, manager, userManager, user);
             await AddToRole(CanDeleteBooks, manager, userManager, user);
@@ -82,14 +63,16 @@ namespace LMS.Models
             await AddToRole(CanDeleteBookCopies, manager, userManager, user);
             await AddToRole(CanViewBookCopies, manager, userManager, user);
 
-            return true;
+            await AddToRole(CanViewInventories, manager, userManager, user);
+            await AddToRole(CanAddInventories, manager, userManager, user);
+            await AddToRole(CanDeleteInventories, manager, userManager, user);
+            await AddToRole(CanEditInventories, manager, userManager, user);
         }
-        public static async Task<bool> AddStandardUserRoles(RoleManager<IdentityRole> manager, ApplicationUserManager userManager, ApplicationUser user)
+        public static async Task AddStandardUserRoles(RoleManager<IdentityRole> manager, ApplicationUserManager userManager, ApplicationUser user)
         {
             await AddToRole(CanViewBooks, manager, userManager, user);
-            return true;
         }
-        private static async Task<bool> AddToRole(string role, RoleManager<IdentityRole> manager, ApplicationUserManager userManager, ApplicationUser user)
+        private static async Task AddToRole(string role, RoleManager<IdentityRole> manager, ApplicationUserManager userManager, ApplicationUser user)
         {
             if (await manager.FindByNameAsync(role) == null)
             {
@@ -99,7 +82,6 @@ namespace LMS.Models
             {
                 await userManager.AddToRoleAsync(user.Id, role);
             }
-            return true;
         }
     }
 }

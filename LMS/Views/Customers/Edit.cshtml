@@ -1,4 +1,4 @@
-﻿@model LMS.ViewModels.CustomerFormViewModel
+﻿@model LMS.Models.Customer
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,19 +14,18 @@
 @using (Html.BeginForm(action, controller))
 {
     <div class="form-group">
-        @Html.LabelFor(m => m.Customer.Name)
-        @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Customer.Birthdate)
-        @Html.TextBoxFor(m => m.Customer.Birthdate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+        @Html.LabelFor(m => m.Birthdate)
+        @Html.TextBoxFor(m => m.Birthdate, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Customer.CardId)
-        @Html.TextBoxFor(m => m.Customer.CardId, new { @class = "form-control" })
+        @Html.LabelFor(m => m.CardId)
+        @Html.TextBoxFor(m => m.CardId, new { @class = "form-control" })
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
     @Html.AntiForgeryToken();
-    @Html.HiddenFor(m => m.Customer.RentalsCount)
-    @Html.HiddenFor(m => m.Customer.Id)
+    @Html.HiddenFor(m => m.Id)
 }

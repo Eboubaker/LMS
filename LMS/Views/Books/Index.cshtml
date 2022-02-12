@@ -1,29 +1,39 @@
-﻿@model System.Security.Principal.IPrincipal
+﻿@model LMS.ViewModels.NewRentalViewModel
 @{
     ViewBag.Title = "Books";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Available Books</h2>
+<h3>Available Books</h3>
 <div class="container">
     <div class="row mb-2">
-        @if (Model.IsInRole(LMS.Models.Role.CanAddBooks))
+        @if (User.IsInRole(LMS.Models.Role.CanAddBooks))
         {
-            <div class="col-sm-2">
+            <div class="col-sm-2 pl-0">
                 @Html.ActionLink("Add Book", "New", null, new { @class = "btn btn-primary" })
             </div>
         }
     </div>
 </div>
-
+<style>
+    #js-books-table tfoot tr {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+</style>
 <table class="table table-bordered" id="js-books-table"></table>
 
 @section scripts{
     <script>
+
         $(document).ready(function () {
             var table = $("#js-books-table").DataTable({
                 serverSide: true,
                 autoWidth: true,
-                processing:true,
+                processing: true,
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+                },
                 ajax: {
                     url: "/books/table",
                     method: "POST",
@@ -35,7 +45,8 @@
                         title: "Title",
                         name:"Title",
                         render: function (_, _, book) {
-                            return `<a href='/books/details/${book.id}' title='View This Book'> ${book.title} </a>`;
+                            console.log("y");
+                            return `<a href='/books/details/${book.id}' title='#${book.id}'> ${book.title} </a>`;
                         }
                     },
                     {
@@ -50,54 +61,71 @@
                         data: "numberInStock",
                         searchable: false,
                         render: function (_, _, book) {
-                            return `<a href="/bookcopies/forbook/${book.id}">${book.numberInStock} Copies</a>`;
+                            if (book.numberInStock > 0)
+                                return `<a title="view Copies" href="/bookcopies/forbook/${book.id}">${book.numberInStock} ${book.numberInStock > 1 ? " Copies" : " Copy"}</a>`;
+                            else return `<span class="text-danger">No Stock!</span>`;
                         }
                     },
                     {
                         title: "Rented",
                         name: "RentalsCount",
                         data: "rentalsCount",
-                        searchable: false
+                        searchable: false,
+                        render: function (_, _, book) {
+                            if (book.rentalsCount > 0) {
+                                return `<a title="View Rented Books" href="/rentals/forbook/${book.id}">${book.rentalsCount} ${book.rentalsCount > 1 ? " Copies" : " Copy"}</a>`;
+                            } else return 0;
+                        }
                     },
                     {
                         title: "Available",
                         name:"NumberAvailable",
                         data: "numberAvailable",
-                        searchable: false
+                        searchable: false,
+                        render: function (_, _, book) {
+                            if (book.numberAvailable > 0) {
+                                return `<a title="View Rented Books" href="/bookcopies/forbook/${book.id}">${book.numberAvailable} ${book.numberAvailable > 1 ? " Copies" : " Copy"}</a>`;
+                            } else if (book.numberInStock > 0) return `<span class="text-danger">Out of Stock!</span>`;
+                            else return `<span class="text-danger">No Stock!</span>`;
+                        }
                     },
                     {
                         title: "Actions",
                         data: "id",
                         orderable: false,
+                        width: 1,
                         render: function (bookId) {
-                            var edit = remove = "";
-                            @if (Model.IsInRole(LMS.Models.Role.CanAddBooks))
-                            {
-                                <text>edit = `<a href="/books/edit/${bookId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
+                            var edit = remove = choose = "";
+                            @if (Model == null) {
+                                if (User.IsInRole(LMS.Models.Role.CanAddBooks))
+                                {
+                                    <text>edit = `<a href="/books/edit/${bookId}" class="mx-1 btn btn-primary"><i class="fa fa-edit"></i>Edit</a>`</text>
+                                }
+                                if (User.IsInRole(LMS.Models.Role.CanDeleteBooks))
+                                {
+                                    <text>remove = `<a href="#" data-book-id='${bookId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                }
                             }
-                            @if (Model.IsInRole(LMS.Models.Role.CanDeleteBooks))
+                            else
                             {
-                                <text>remove = `<a href="#" data-book-id='${bookId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                <text>choose = `<a href="/bookcopies/choose?bookId=${bookId}&customerId=@Model.CustomerId" class="mx-1 btn btn-success">Choose</a>`</text>
                             }
-                            return `<span style="display:flex">${edit} ${remove}</span>`;
+                            return `<span style="display:flex">${edit} ${remove} ${choose}</span>`;
                         }
                     }
-                ]
+                ],
             });
+            @*table.columns().eq(0).each(function (colIdx) {
+                $('input', table.column(colIdx).footer()).on('keyup change', function () {
+                    table.column(colIdx)
+                        .search(this.value.replace(/;/g, "& quot;|& quot;"), true, false)
+                        .draw();
+                });
+            } );*@
+            @*$('#js-books-table tfoot tr').appendTo('#js-books-table thead');*@
+
             $("#js-books-table").on("click", ".js-delete", function () {
                 var button = $(this);
-                @*bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
-                    if (result) {
-                        $.ajax({
-                            url: "/api/book/" + button.data("book-id"),
-                            method: "DELETE",
-                            success: function () {
-                                table.row(button.parents('tr')).remove().draw();
-                            }
-                        })
-                    }
-                    return false;
-                });*@
                 bootbox.dialog({
                     title: "Confirm Your Action",
                     message: '<span>Delete <strong>" ' + button.parents('tr').children().first().find("a").text() + '"</strong> ?</span>',
@@ -110,9 +138,14 @@
                                 $.ajax({
                                     url: "/books/delete/" + button.data("book-id"),
                                     method: "POST",
-                                    success: function () {
-                                        table.row(button.parents('tr')).remove().draw();
-                                        toastr.success("Book Removed!");
+                                    dataType:"json",
+                                    success: function (data) {
+                                        if (data.success) {
+                                            table.row(button.parents('tr')).remove().draw();
+                                            toastr.success(data.message);
+                                        } else {
+                                            toastr.error(data.error);
+                                        }
                                     }
                                 })
                             }
@@ -121,10 +154,10 @@
                             label: 'Cancel',
                             className: 'btn-secondary',
                             callback: function () {
-                                console.log("you piece of shit, why");
+                                console.log("nonooooo");
                             }
                         }
-                        
+
                     },
                     onEscape: function () {
                         console.log("help welp melp");

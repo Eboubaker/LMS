@@ -3,7 +3,7 @@
     ViewBag.Title = "Edit Copy";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Edit Copy</h2>
+<h3>Edit Copy <a href="/bookcopies/details/@Model.Id">@Model.Book.Title</a></h3>
 
 @using (Html.BeginForm("Update", "BookCopies"))
 {
@@ -22,8 +22,10 @@
     </div>
     @Html.ValidationSummary(true, "Please Fix These Issues", new { @class = "text-danger" })
     <button type="submit" class="btn btn-primary">Add</button>
-    @Html.HiddenFor(m => m.BookId, new { value = Model.BookId })
+    @Html.HiddenFor(m => m.BookId)
+    @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.Rented)
+    @Html.HiddenFor(m => m.InventoryId)
     @Html.AntiForgeryToken()
 }
 @Html.RouteLink("Back To Book", new { action = "Details", controller = "Books", id = Model.BookId })

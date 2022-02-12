@@ -3,11 +3,6 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{
-    var forCustomerAction = nameof(LMS.Controllers.RentalsController.ForCustomer);
-    var rentalsController = nameof(LMS.Models.Rental) + "s";
-    var customersController = nameof(LMS.Models.Customer) + "s";
-}
 <h2>@Model.Name</h2>
 <h4>Customer Details</h4>
 <table class="table table-responsive table-bordered">
@@ -27,7 +22,7 @@
         <th>Rented Books</th>
         @if (Model.RentalsCount > 0)
         {
-            <td>@Html.ActionLink(@Model.RentalsCount + " Books", forCustomerAction, rentalsController)</td>
+            <td>@Html.RouteLink(@Model.RentalsCount + " Books", new { controller="rentals",action="forcustomer",id = Model.Id})</td>
         }
         else
         {
@@ -40,15 +35,15 @@
 <div class="row" style="margin-left:0">
     @if (User.IsInRole(LMS.Models.Role.CanEditCustomers))
     {
-        @Html.ActionLink("Edit", "Edit", customersController, new { id = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Edit", "Edit", "customers", new { id = Model.Id }, new { @class = "btn btn-primary" })
     }
     @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
     {
-        @Html.RouteLink("Rent", new { controller = rentalsController, action = "New", customerId = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.RouteLink("Rent", new { controller = "rentals", action = "New", customerId = Model.Id }, new { @class = "btn btn-primary" })
     }
     @if (User.IsInRole(LMS.Models.Role.CanDeleteCustomers))
     {
-        @Html.ActionLink("Delete", "Delete", customersController, new { id = Model.Id }, new { @class = "btn btn-danger" })
+        @Html.ActionLink("Delete", "Delete", "customers", new { id = Model.Id }, new { @class = "btn btn-danger" })
     }
 </div>
 

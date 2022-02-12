@@ -6,6 +6,7 @@ using System.Web;
 
 namespace LMS.Models
 {
+    // Temporarly Holder class for the csv data
     public class OldBook
     {
         public int Id { get; set; }

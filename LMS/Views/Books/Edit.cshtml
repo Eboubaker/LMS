@@ -55,12 +55,12 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Class)
-        @Html.DropDownListFor(m => m.Book.ClassId, new SelectList(Model.Classes, "Id", "Name", Model.Book.ClassId), "", new { @class = "form-control" })
+        @Html.DropDownListFor(m => m.Book.ClassId, new SelectList(Model.Classes, "Id", "Name", Model.Book.ClassId), new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Book.ClassId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Language)
-        @Html.DropDownListFor(m => m.Book.LanguageId, new SelectList(Model.Languages, "Id", "Name", Model.Book.LanguageId), "", new { @class = "form-control" })
+        @Html.DropDownListFor(m => m.Book.LanguageId, new SelectList(Model.Languages, "Id", "Name", Model.Book.LanguageId), new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Book.LanguageId, "", new { @class = "text-danger" })
     </div>
     @Html.ValidationSummary(true, "Please Fix These Errors", new { @class="text-danger"})
@@ -70,71 +70,3 @@
     @Html.AntiForgeryToken()
 }
 @Html.ActionLink("Back To List", "Index")
-@*@section scripts{
-        <script>
-            var genres = [];// array(genre)
-            var bookGenres = [];// array(int)
-            @foreach(var genre in genres)
-            {
-            <text>
-            bookGenres.push(@genre.Id);
-
-
-            </text>
-            }
-            @foreach(var genre in Model.Genres)
-            {
-            <text>
-            genres.push({ id:@genre.Id, name: "@genre.Name" });
-            $("#Genres>option").not(function (i, e) {
-                return !bookGenres.includes(parseInt(e.value));
-            }).remove();
-            </text>
-            }
-            // remove genre
-            $(".posttags").on("click", "li>a>span", function (e) {
-                var li = $($(e.target).parents("li"));
-                var id = li.data("id");
-                var newarr = bookGenres.filter(i => i != id);
-                if (newarr.length != bookGenres.length) {
-                    $("#Genres").append(`<option value='${id}'>${li[0].innerText.split("\n")[0]}</option>`);
-                    li.remove();
-                    bookGenres = newarr;
-
-                }
-            });
-            // add genre
-            $("#Genres").on("change", function (e) {
-                var list = e.target;
-                var id = parseInt(list.value);
-                if (Number.isInteger(id)) {
-                    var genreName = genres.find(i => i.id == id).name;
-                    $(".posttags").append(`<li data-id="${id}"><a href="#" onclick="return false;">${genreName}<span>X</span></a></li>`)
-                    $(`#Genres>option[value='${id}']`).remove();
-                    bookGenres.push(id);
-                }
-            });
-            var form = $("#apiform");
-            form[0].onsubmit = function (e) {
-                var book = {};
-                book.Id = form.find("input[name='Book.Id'").val();
-                book.Name = form.find("input[name='Book.Name'").val();
-                book.NumberInStock = form.find("input[name='Book.NumberInStock'").val();
-                book.Genres = [];
-                for (var gid of bookGenres) {
-                    book.Genres.push({ Id: gid, Name: "_" });
-                }
-                console.log(book);
-                e.preventDefault();
-                $.ajax({
-                    url: form[0].action,
-                    data: book,
-                    method: "PUT",
-                    success: function (a, b, c) {
-                        window.location = "/books/details/" + book.Id;
-                    }
-                });
-                return false;
-            };
-        </script>
-    }*@

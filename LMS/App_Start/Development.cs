@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using DataTables.AspNet.Mvc5;
 using LMS.Models;
-using Vidly.Models;
+using LMS.Models;
 using System.Data.Entity;
 namespace LMS.App_Start
 {
@@ -19,11 +19,39 @@ namespace LMS.App_Start
             dostuff();
             Environment.Exit(0);
         }
-
         private static void dostuff()
         {
-            var context = new ApplicationDbContext();
+            var context = new LibraryManagmentContext();
+            var inventories = context.Inventories.Where(m => m.Size < 8);
+            var r = new Random();
+            foreach(var inventory in inventories)
+            {
+                inventory.Size = r.Next(8, 17);
+            }
+            context.SaveChanges();
         }
+        //private static void dostuff()
+        //{
+        //    var lastNames = new List<string>(new string[] { "Abadi", "Abdallah", "Ahmad", "Ali", "Amin", "Asghar", "Ayad", "Aziz", "Badawi", "Baghdadi", "Bakir", "Bashar", "Bilal", "Burhan", "Darwish", "Dawoud", "Ebeid", "Fadel", "Faez", "Faheem", "Faizan", "Farhat", "Farouq", "Farsi", "Fasih", "Fasil", "Fayed", "Gaddafi", "Ghazali", "Ghazawwi", "Ghulam", "Habib", "Hadi", "Hadid", "Hafeez", "Hakim", "Hamdi", "Hariri", "Hashim", "Hasnawi", "Hatem", "Hijazi", "Hussein", "Ibrahim", "Iqbal", "Irfan", "Isa", "Ismat", "Issawi", "Jabal", "Jabir", "Jalal", "Jameel", "Jawahir", "Jaziri", "Kader", "Karim", "Kashif", "Kassab", "Kazem", "Khalid", "Laghmani", "Maalouf", "Maamoun", "Mohammed", "Mahmud", "Marwan", "Mufti", "Mughrabi", "Mustafa", "Nabih", "Nader", "Nagi", "Nahdi", "Najdi", "Najm", "Najjar", "Noor", "Osman", "Qadir", "Qasim", "Qureshi", "Rafiq", "Rahim", "Rajab", "Ramzan", "Ramzi", "Rashid", "Reza", "Sader", "Sajjad", "Shariq", "Saqqaf", "Sultan", "Taleb", "Tawfiq", "Wahed", "Yasin", "Yusuf", "Zaman" });
+        //    var FirstNames = new List<string>(new string[] { "Aaban", "Aadil", "Aahil", "Aamir", "Aaqib", "Aaqil", "Aariz", "Aashir", "Aasim", "Abbas", "Abdul", "Abdullah", "Abdulraheem", "Adam", "Aden", "Adyan", "Ahmed", "Ales", "Ali", "Amaan", "Amari", "Amir", "Antwan", "Asif", "Aslam", "Atif", "Awadi", "Azees", "Bashir", "Caleb", "Chirag", "Dawood", "Dilshad", "Ebrahim", "Ehsan", "Faheem", "Fareed", "Farooq", "Gafar", "Ghani", "Ghufran", "Haafiz", "Haamid", "Haaroon", "Haider", "Hamza", "Hani", "Haroon", "Hasan", "Hussain", "Ibrahim", "Ijaz", "Imam", "Imran", "Imtiaz", "Intekhab", "Iqbal", "Ismael", "Jamal", "Jawad", "Kaden", "Kadin", "Kale", "Kamal", "Karim", "Kemo", "Khaled", "Khalil", "Madni", "Mahamat", "Makhi", "Malik", "Messiah", "Mohammad", "Moiz", "Naif", "Nash", "Nasser", "Omar", "Rashad", "Rizwan", "Saad", "Saif", "Samir", "Shahid", "Shams", "Shamz", "Taha", "Talal", "Tariq", "Tetsuo", "Wasi", "Yahir", "Yaser", "Youssof", "Yusuf", "Zaire", "Zakaria", "Zakir", "Zishan", "Aadila", "Aaeesha", "Aafia", "Aafreen", "Aaliyah", "Aameena", "Aamira", "Aanisah", "Aasma", "Abrar", "Aidah", "Aisha", "Alaa", "AlAnoud", "Aleah", "Aleeza", "Alesha", "Alina", "Alma", "Alsama", "Amani", "Amelia", "Amina", "Amira", "Anjum", "Ariana", "Asgari", "Azeema", "Aziza", "Balqees", "Banu", "Batool", "Bayan", "Beatrice", "Benazir", "Bushra", "Callie", "Chanda", "Chandini", "Daania", "Dilshad", "Eliza", "Farha", "Farida", "Faten", "Fatima", "Fauzia", "Fazeela", "Firdaus", "Firoza", "Gazala", "Ghada", "Ghayda", "Gudia", "Haafiza", "Haamida", "Habeeba", "Hadeel", "Hana", "Hasina", "Heena", "Imani", "Jaliyah", "Jazmin", "Jenna", "Kaleigh", "Kaley", "Kaliyah", "Kefaya", "Keyla", "Laila", "Lamia", "Layla", "Leila", "Lily", "Lulu", "Lydia", "Lyla", "Mariam", "Maritza", "Mina", "Nada", "Nadia", "Naima", "Nouf", "Noura", "Ola", "Raihana", "Rana", "Reem", "Reenad", "Sabrina", "Salma", "Samira", "Sanaa", "Sarah", "Wadha", "Yasmine", "Yesenia", "Zain" });
+        //    FirstNames = FirstNames.OrderBy(m => Guid.NewGuid()).ToList();
+        //    lastNames = lastNames.OrderBy(m => Guid.NewGuid()).ToList() ;
+        //    var r = new Random();
+        //    var context = new LibraryManagmentContext();
+        //    foreach (var _ in Enumerable.Range(0, 200))
+        //    {
+        //        string code = "1818" + r.Next(1, 4).ToString() + r.Next(0, 8).ToString() + r.Next(0, 9).ToString() + r.Next(0, 9).ToString() + r.Next(0, 9).ToString() + r.Next(0, 9).ToString() + r.Next(0, 9).ToString() + r.Next(0, 9).ToString();
+        //        var customer = new Customer()
+        //        {
+        //            Name = lastNames[r.Next(lastNames.Count)] + " " + FirstNames[r.Next(FirstNames.Count)],
+        //            CardId = code,
+        //            Birthdate = RandomDate()
+        //        };
+        //        context.Customers.Add(customer);
+                
+        //    }
+        //    context.SaveChanges();
+        //}
 
         //private static void dostuff()
         //{

@@ -32,11 +32,6 @@
         @Html.TextBoxFor(m => m.Book.Price, new { @class = "form-control", type = "number" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Book.NumberInStock)
-        @Html.TextBoxFor(m => m.Book.NumberInStock, new { @class = "form-control", type = "number" })
-        @Html.ValidationMessageFor(m => m.Book.NumberInStock, "", new { @class = "text-danger" })
-    </div>
-    <div class="form-group">
         @Html.LabelFor(m => m.Book.Publisher)
         @Html.TextBoxFor(m => m.Book.Publisher, new { @class = "form-control" })
     </div>
@@ -55,17 +50,18 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Class)
-        @Html.DropDownListFor(m => m.Book.Class, new SelectList(Model.Classes, "Id", "Name"), "Select Class", new { @class = "form-control" })
+        @Html.DropDownListFor(m => m.Book.ClassId, new SelectList(Model.Classes, "Id", "Name"), "Select Class", new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Book.ClassId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Book.Language)
-        @Html.DropDownListFor(m => m.Book.Language, new SelectList(Model.Languages, "Id", "Name"), "Select Language", new { @class = "form-control" })
+        @Html.DropDownListFor(m => m.Book.LanguageId, new SelectList(Model.Languages, "Id", "Name"), "Select Language", new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Book.LanguageId, "", new { @class = "text-danger" })
     </div>
-    @Html.ValidationSummary(true, "Please Fix These Issues", new { @class="text-danger"})
+    @Html.ValidationSummary(true, "Please Fix These Issues", new { @class = "text-danger" })
     <button type="submit" class="btn btn-primary">Add</button>
     @Html.HiddenFor(m => m.Book.Id)
+    @Html.HiddenFor(m => m.Book.Popularity)
     @Html.HiddenFor(m => m.Book.DateAdded)
     @Html.AntiForgeryToken()
 }

@@ -225,6 +225,7 @@
     <Compile Include="Controllers\BookCopiesController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InventoriesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\BooksController.cs" />
     <Compile Include="Controllers\RentalsController.cs" />
@@ -232,77 +233,77 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.cs" />
-    <Compile Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.Designer.cs">
-      <DependentUpon>202009021253236_add-basebook-to-rental-for-ease-of-use.cs</DependentUpon>
+    <Compile Include="Migrations\202009072216421_kdkdk85sd.cs" />
+    <Compile Include="Migrations\202009072216421_kdkdk85sd.Designer.cs">
+      <DependentUpon>202009072216421_kdkdk85sd.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009021258510_add-basebook-to-rental-for-ease-of-use2.cs" />
-    <Compile Include="Migrations\202009021258510_add-basebook-to-rental-for-ease-of-use2.Designer.cs">
-      <DependentUpon>202009021258510_add-basebook-to-rental-for-ease-of-use2.cs</DependentUpon>
+    <Compile Include="Migrations\202009072217310_kdkdk85sd52.cs" />
+    <Compile Include="Migrations\202009072217310_kdkdk85sd52.Designer.cs">
+      <DependentUpon>202009072217310_kdkdk85sd52.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009021642048_lalala.cs" />
-    <Compile Include="Migrations\202009021642048_lalala.Designer.cs">
-      <DependentUpon>202009021642048_lalala.cs</DependentUpon>
+    <Compile Include="Migrations\202009082041563_sauce.cs" />
+    <Compile Include="Migrations\202009082041563_sauce.Designer.cs">
+      <DependentUpon>202009082041563_sauce.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009031715567_customers.cs" />
-    <Compile Include="Migrations\202009031715567_customers.Designer.cs">
-      <DependentUpon>202009031715567_customers.cs</DependentUpon>
+    <Compile Include="Migrations\202009082046002_sauce1.cs" />
+    <Compile Include="Migrations\202009082046002_sauce1.Designer.cs">
+      <DependentUpon>202009082046002_sauce1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009031719556_customers1.cs" />
-    <Compile Include="Migrations\202009031719556_customers1.Designer.cs">
-      <DependentUpon>202009031719556_customers1.cs</DependentUpon>
+    <Compile Include="Migrations\202009082049495_sauce2.cs" />
+    <Compile Include="Migrations\202009082049495_sauce2.Designer.cs">
+      <DependentUpon>202009082049495_sauce2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009031739190_customers11.cs" />
-    <Compile Include="Migrations\202009031739190_customers11.Designer.cs">
-      <DependentUpon>202009031739190_customers11.cs</DependentUpon>
+    <Compile Include="Migrations\202009082057236_sauce3.cs" />
+    <Compile Include="Migrations\202009082057236_sauce3.Designer.cs">
+      <DependentUpon>202009082057236_sauce3.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009041808029_lflfl.cs" />
-    <Compile Include="Migrations\202009041808029_lflfl.Designer.cs">
-      <DependentUpon>202009041808029_lflfl.cs</DependentUpon>
+    <Compile Include="Migrations\202009090903012_sauce4.cs" />
+    <Compile Include="Migrations\202009090903012_sauce4.Designer.cs">
+      <DependentUpon>202009090903012_sauce4.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009051924466_diddji.cs" />
-    <Compile Include="Migrations\202009051924466_diddji.Designer.cs">
-      <DependentUpon>202009051924466_diddji.cs</DependentUpon>
+    <Compile Include="Migrations\202009090906533_sauce5.cs" />
+    <Compile Include="Migrations\202009090906533_sauce5.Designer.cs">
+      <DependentUpon>202009090906533_sauce5.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009051933083_diddjisc.cs" />
-    <Compile Include="Migrations\202009051933083_diddjisc.Designer.cs">
-      <DependentUpon>202009051933083_diddjisc.cs</DependentUpon>
+    <Compile Include="Migrations\202009090912522_sauce6.cs" />
+    <Compile Include="Migrations\202009090912522_sauce6.Designer.cs">
+      <DependentUpon>202009090912522_sauce6.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009051937515_diddjiscs.cs" />
-    <Compile Include="Migrations\202009051937515_diddjiscs.Designer.cs">
-      <DependentUpon>202009051937515_diddjiscs.cs</DependentUpon>
+    <Compile Include="Migrations\202009090924172_sauce7.cs" />
+    <Compile Include="Migrations\202009090924172_sauce7.Designer.cs">
+      <DependentUpon>202009090924172_sauce7.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009051953309_diddjiscsg.cs" />
-    <Compile Include="Migrations\202009051953309_diddjiscsg.Designer.cs">
-      <DependentUpon>202009051953309_diddjiscsg.cs</DependentUpon>
+    <Compile Include="Migrations\202009091114255_sauce8.cs" />
+    <Compile Include="Migrations\202009091114255_sauce8.Designer.cs">
+      <DependentUpon>202009091114255_sauce8.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009051957104_diddj54.cs" />
-    <Compile Include="Migrations\202009051957104_diddj54.Designer.cs">
-      <DependentUpon>202009051957104_diddj54.cs</DependentUpon>
+    <Compile Include="Migrations\202009091125493_sauce9.cs" />
+    <Compile Include="Migrations\202009091125493_sauce9.Designer.cs">
+      <DependentUpon>202009091125493_sauce9.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009052000411_diddj548.cs" />
-    <Compile Include="Migrations\202009052000411_diddj548.Designer.cs">
-      <DependentUpon>202009052000411_diddj548.cs</DependentUpon>
+    <Compile Include="Migrations\202009092035301_sauce10.cs" />
+    <Compile Include="Migrations\202009092035301_sauce10.Designer.cs">
+      <DependentUpon>202009092035301_sauce10.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009052002597_diddj5489.cs" />
-    <Compile Include="Migrations\202009052002597_diddj5489.Designer.cs">
-      <DependentUpon>202009052002597_diddj5489.cs</DependentUpon>
+    <Compile Include="Migrations\202009092122457_sauce11.cs" />
+    <Compile Include="Migrations\202009092122457_sauce11.Designer.cs">
+      <DependentUpon>202009092122457_sauce11.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009052016365_diddj54891.cs" />
-    <Compile Include="Migrations\202009052016365_diddj54891.Designer.cs">
-      <DependentUpon>202009052016365_diddj54891.cs</DependentUpon>
+    <Compile Include="Migrations\202009092125473_sauce12.cs" />
+    <Compile Include="Migrations\202009092125473_sauce12.Designer.cs">
+      <DependentUpon>202009092125473_sauce12.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009052020112_diddj548sxl.cs" />
-    <Compile Include="Migrations\202009052020112_diddj548sxl.Designer.cs">
-      <DependentUpon>202009052020112_diddj548sxl.cs</DependentUpon>
+    <Compile Include="Migrations\202009101036086_sauce13.cs" />
+    <Compile Include="Migrations\202009101036086_sauce13.Designer.cs">
+      <DependentUpon>202009101036086_sauce13.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009061229444_kdvndknv.cs" />
-    <Compile Include="Migrations\202009061229444_kdvndknv.Designer.cs">
-      <DependentUpon>202009061229444_kdvndknv.cs</DependentUpon>
+    <Compile Include="Migrations\202009101040221_sauce14.cs" />
+    <Compile Include="Migrations\202009101040221_sauce14.Designer.cs">
+      <DependentUpon>202009101040221_sauce14.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202009061230212_kdvndknvp.cs" />
-    <Compile Include="Migrations\202009061230212_kdvndknvp.Designer.cs">
-      <DependentUpon>202009061230212_kdvndknvp.cs</DependentUpon>
+    <Compile Include="Migrations\202009101044152_sauce15.cs" />
+    <Compile Include="Migrations\202009101044152_sauce15.Designer.cs">
+      <DependentUpon>202009101044152_sauce15.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -312,7 +313,7 @@
     <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\Misc\DataTables.cs" />
     <Compile Include="Models\Customer.cs" />
-    <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\LibraryManagmentContext.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MembershipType.cs" />
@@ -325,10 +326,10 @@
     <Compile Include="LMSUtils\Utils.cs" />
     <Compile Include="ViewModels\BookCopiesListViewModel.cs" />
     <Compile Include="ViewModels\CustomerDetailsViewModel.cs" />
-    <Compile Include="ViewModels\CustomerFormViewModel.cs" />
-    <Compile Include="ViewModels\CustomerRentalViewModel.cs" />
     <Compile Include="ViewModels\BookDetailsViewModel.cs" />
     <Compile Include="ViewModels\BookFormViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\NewRentalViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Database1.mdf" />
@@ -707,66 +708,17 @@
     <Content Include="Seeds\MembershipTypes.json" />
     <Content Include="Views\Rentals\Index.cshtml" />
     <Content Include="Views\Books\Index.cshtml" />
-    <Content Include="Views\BookCopies\Index.cshtml" />
+    <Content Include="Views\BookCopies\Details.cshtml" />
     <Content Include="Views\BookCopies\ForBook.cshtml" />
     <Content Include="Views\BookCopies\New.cshtml" />
     <Content Include="Views\BookCopies\Edit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202009021253236_add-basebook-to-rental-for-ease-of-use.resx">
-      <DependentUpon>202009021253236_add-basebook-to-rental-for-ease-of-use.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009021258510_add-basebook-to-rental-for-ease-of-use2.resx">
-      <DependentUpon>202009021258510_add-basebook-to-rental-for-ease-of-use2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009021642048_lalala.resx">
-      <DependentUpon>202009021642048_lalala.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009031715567_customers.resx">
-      <DependentUpon>202009031715567_customers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009031719556_customers1.resx">
-      <DependentUpon>202009031719556_customers1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009031739190_customers11.resx">
-      <DependentUpon>202009031739190_customers11.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009041808029_lflfl.resx">
-      <DependentUpon>202009041808029_lflfl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009051924466_diddji.resx">
-      <DependentUpon>202009051924466_diddji.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009051933083_diddjisc.resx">
-      <DependentUpon>202009051933083_diddjisc.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009051937515_diddjiscs.resx">
-      <DependentUpon>202009051937515_diddjiscs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009051953309_diddjiscsg.resx">
-      <DependentUpon>202009051953309_diddjiscsg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009051957104_diddj54.resx">
-      <DependentUpon>202009051957104_diddj54.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009052000411_diddj548.resx">
-      <DependentUpon>202009052000411_diddj548.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009052002597_diddj5489.resx">
-      <DependentUpon>202009052002597_diddj5489.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009052016365_diddj54891.resx">
-      <DependentUpon>202009052016365_diddj54891.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009052020112_diddj548sxl.resx">
-      <DependentUpon>202009052020112_diddj548sxl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009061229444_kdvndknv.resx">
-      <DependentUpon>202009061229444_kdvndknv.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009061230212_kdvndknvp.resx">
-      <DependentUpon>202009061230212_kdvndknvp.cs</DependentUpon>
-    </EmbeddedResource>
+    <Content Include="Views\Rentals\Details.cshtml" />
+    <Content Include="Views\Home\Message.cshtml" />
+    <Content Include="Views\Rentals\ForCustomer.cshtml" />
+    <Content Include="Views\Inventories\Form.cshtml" />
+    <Content Include="Views\Inventories\Details.cshtml" />
+    <Content Include="Views\BookCopies\ForInventory.cshtml" />
+    <Content Include="Views\Inventories\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -778,6 +730,62 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202009072216421_kdkdk85sd.resx">
+      <DependentUpon>202009072216421_kdkdk85sd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009072217310_kdkdk85sd52.resx">
+      <DependentUpon>202009072217310_kdkdk85sd52.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009082041563_sauce.resx">
+      <DependentUpon>202009082041563_sauce.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009082046002_sauce1.resx">
+      <DependentUpon>202009082046002_sauce1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009082049495_sauce2.resx">
+      <DependentUpon>202009082049495_sauce2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009082057236_sauce3.resx">
+      <DependentUpon>202009082057236_sauce3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009090903012_sauce4.resx">
+      <DependentUpon>202009090903012_sauce4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009090906533_sauce5.resx">
+      <DependentUpon>202009090906533_sauce5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009090912522_sauce6.resx">
+      <DependentUpon>202009090912522_sauce6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009090924172_sauce7.resx">
+      <DependentUpon>202009090924172_sauce7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009091114255_sauce8.resx">
+      <DependentUpon>202009091114255_sauce8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009091125493_sauce9.resx">
+      <DependentUpon>202009091125493_sauce9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009092035301_sauce10.resx">
+      <DependentUpon>202009092035301_sauce10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009092122457_sauce11.resx">
+      <DependentUpon>202009092122457_sauce11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009092125473_sauce12.resx">
+      <DependentUpon>202009092125473_sauce12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009101036086_sauce13.resx">
+      <DependentUpon>202009101036086_sauce13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009101040221_sauce14.resx">
+      <DependentUpon>202009101040221_sauce14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009101044152_sauce15.resx">
+      <DependentUpon>202009101044152_sauce15.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

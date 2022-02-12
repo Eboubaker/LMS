@@ -1,9 +1,9 @@
-﻿@model System.Security.Principal.IPrincipal
+﻿@model LMS.ViewModels.NewRentalViewModel
 @{
     ViewBag.Title = "Customers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Registered Customers</h2>
+<h3>Registered Customers</h3>
 <div class="container">
     <div class="row mb-2">
         @if (User.IsInRole(LMS.Models.Role.CanAddCustomers))
@@ -15,18 +15,7 @@
     </div>
 </div>
 
-<table class="table table-bordered" id="js-customers-table">
-    <thead>
-        <tr class="d-flex">
-            <th class="col-sm-2">Customer</th>
-            <th>Rented Books</th>
-            <th>Card Id</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+<table class="table table-bordered" id="js-customers-table"></table>
 
 @section scripts{
     <script>
@@ -34,25 +23,26 @@
             var table = $("#js-customers-table").DataTable({
                 serverSide: true,
                 autoWidth: true,
-                processing:true,
+                processing: true,
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+                },
                 ajax: {
                     url: "/customers/table",
-                    method: "GET",
+                    method: "POST",
                     dataSrc: "data"
                 },
                 columns: [
                     {
-                        name: "Customer",
-                        targets: 0,
-                        width:"50%",
-                        render: function (_, _, customer) {
-                            return `<a href='/customer/details/${customer.id}' title='View This Customer'> ${customer.name} </a>`;
+                        title:"Customer",
+                        name: "Name",
+                        render: function (i, i, customer) {
+                            return `<a href='/customers/details/${customer.id}' title='View This Customer'> ${customer.name} </a>`;
                         }
                     },
                     {
-                        name: "Rented Books",
-                        targets:1,
-                        width:80,
+                        title: "Rented Books",
+                        name:"RentalsCount",
                         searchable: false,
                         render: function (_, _, customer) {
                             if (customer.rentalsCount > 0) {
@@ -62,33 +52,39 @@
                         }
                     },
                     {
-                        name: "Card Id",
-                        targets: 2,
-                        width: 50,
+                        title: "Card Id",
+                        name:"CardId",
                         data: "cardId",
                         searchable: true,
                         orderable: false
                     },
                     {
-                        name: "Actions",
-                        targets:2,
+                        title: "Actions",
                         data: "id",
-                        width: 80,
                         orderable: false,
+                        searchable: false,
+                        width: 1,
                         render: function (customerId) {
-                            var edit = remove = "";
-                            @if (User.IsInRole(LMS.Models.Role.CanAddCustomers))
-                            {
-                                <text>edit = `<a href="/customers/edit/${customerId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
+                            var actions="";
+                            @if(Model != null) {
+                                <text>actions += `<a href="/rentals/new?customerId=${customerId}&bookId=@Model.BookId&copyId=@Model.CopyId" class="mx-1 btn btn-success"><i class="fa fa-check"></i> Choose</a>`</text>
                             }
-                            @if (User.IsInRole(LMS.Models.Role.CanDeleteCustomers))
+                            else
                             {
-                                <text>remove = `<a href="#" data-customer-id='${customerId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                if (User.IsInRole(LMS.Models.Role.CanAddCustomers))
+                                {
+                                    <text>actions += `<a href="/customers/edit/${customerId}" class="mx-1 btn btn-primary"><i class="fa fa-edit"></i>Edit</a>`</text>
+                                }
+                                if (User.IsInRole(LMS.Models.Role.CanDeleteCustomers))
+                                {
+                                    <text>actions += `<a href="#" data-customer-id='${customerId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                }
                             }
-                            return `<span style="display:flex">${edit} ${remove}</span>`;
+                            return `<span style="display:flex">${actions}</span>`;
                         }
                     }
-                ]
+                ],
+                order: [[1, "desc"]]
             });
             $("#js-customers-table").on("click", ".js-delete", function () {
                 var button = $(this);
@@ -114,11 +110,16 @@
                             className: 'btn-danger',
                             callback: function () {
                                 $.ajax({
-                                    url: "/customers/delete/" + button.data("book-id"),
+                                    url: "/customers/delete/" + button.data("customer-id"),
                                     method: "POST",
-                                    success: function () {
-                                        table.row(button.parents('tr')).remove().draw();
-                                        toastr.success("Customer Removed!");
+                                    dataType: "json",
+                                    success: function (data) {
+                                        if (data.success) {
+                                            table.row(button.parents('tr')).remove().draw();
+                                            toastr.success(data.message);
+                                        } else {
+                                            toastr.error(data.error);
+                                        }
                                     }
                                 })
                             }
@@ -130,10 +131,9 @@
                                 console.log("you piece of shit, why");
                             }
                         }
-
                     },
                     onEscape: function () {
-                        console.log("help welp melp");
+                        console.log("test 123");
                     }
                 });
                 return false;

@@ -16,12 +16,11 @@ namespace LMS.Models
         public string Title { get; set; }
         public string Authors { get; set; }
         [Required]
-        [Display(Name = "Number in Stock")]
-        public int NumberInStock { get; set; }
+        [Display(Name = "Year Released")]
         public short ReleaseYear { get; set; }
         [Required]
         public DateTime? DateAdded { get; set; }
-        public int NumberAvailable { get; set; }
+        
         // genres that are set to this book
         public string Publisher { get; set; }
         public string Isbn { get; set; }
@@ -32,7 +31,15 @@ namespace LMS.Models
         public int LanguageId { get; set; }
         public Language Language { get; set; }
         public float Popularity { get; set; }
-        public int RentalsCount { get; set; }
+        
         public List<BookCopy> BookCopys { get; set; }
+        public List<Rental> Rentals { get; set; }
+        
+        [NotMapped]
+        public int NumberInStock => BookCopys != null ? BookCopys.Count : -1;
+        [NotMapped]
+        public int NumberAvailable => BookCopys != null && Rentals != null ? BookCopys.Count - Rentals.Count : -1;
+        [NotMapped]
+        public int RentalsCount => Rentals != null ? Rentals.Count : -1;
     }
 }

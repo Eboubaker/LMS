@@ -1,0 +1,46 @@
+﻿@model LMS.Models.Rental
+@{
+    ViewBag.Title = "Rental Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<h4>Rental Details</h4>
+<table class="table table-responsive table-bordered">
+    <tr class="d-flex">
+        <th class="col-sm-2">Customer</th>
+        <td><a title="#@Model.Customer.CardId" href="/customers/details/@Model.CustomerId">@Model.Customer.Name</a></td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-sm-2">Customer Card-Id</th>
+        <td>@Model.Customer.CardId</td>
+    </tr>
+    <tr>
+        <th>Book Copy</th>
+        <td>@Html.RouteLink(Model.Book.Title, new { controller = "bookcopies", action = "details", id = Model.BookCopyId })</td>
+    </tr>
+    <tr>
+        <th>Created</th>
+        <td>@Model.Created.ToString("dd-MM-yyyy HH:mm:ss")</td>
+    </tr>
+    <tr>
+        <th>Expires</th>
+        <td>
+            @if (Model.Expires < DateTime.Now)
+            {
+                <span class="text-danger">Expired before @DateTime.Now.Subtract(Model.Expires).Days Days</span>
+            }
+            else
+            {
+                <text>After @Model.Expires.Subtract(DateTime.Now).Days Days</text>
+            }
+        </td>
+    </tr>
+</table>
+<h4>Actions</h4>
+<hr />
+<div class="row" style="margin-left:0">
+    @if (User.IsInRole(LMS.Models.Role.CanDeleteRentals))
+    {
+        @Html.ActionLink("Put Back", "Return", new { id = Model.Id }, new { @class = "btn btn-success" })
+    }
+</div>

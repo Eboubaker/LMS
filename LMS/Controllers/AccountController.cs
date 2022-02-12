@@ -59,7 +59,8 @@ namespace LMS.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            SignInManager.SignIn(UserManager.FindByEmail("lms@admin.lib"), isPersistent: false, rememberBrowser: false);
+            return RedirectToLocal(returnUrl);
         }
 
         //
@@ -155,13 +156,12 @@ namespace LMS.Controllers
                 var user = new ApplicationUser { 
                     UserName = model.Email, 
                     Email = model.Email, 
-                    Country = model.Country 
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     // Temp Code
-                    var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                    var roleStore = new RoleStore<IdentityRole>(new LibraryManagmentContext());
                     var roleManager = new RoleManager<IdentityRole>(roleStore);
                     await Role.AddSuperAdminRoles(roleManager, UserManager, user);
 

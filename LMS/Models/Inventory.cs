@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace Vidly.Models
+namespace LMS.Models
 {
     [Table("Inventory")]
     public class Inventory
@@ -15,6 +15,6 @@ namespace Vidly.Models
         public int Row { get; set; }
         public int Shelf { get; set; }
         public int Size { get; set; }
-        //public ICollection<BookCopy> BookCopys { get; set; }
+        public ICollection<BookCopy> BookCopys { get; set; }
     }
 }

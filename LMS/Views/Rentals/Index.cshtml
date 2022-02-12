@@ -1,82 +1,163 @@
-﻿
+﻿@model LMS.ViewModels.NewRentalViewModel
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Rentals";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
-
-<h2>Rentals</h2>
-
-<div class="container">
-    <div class="row mb-2">
-        <div class="col-sm-2">
-            @Html.ActionLink("New Rental", "New", null, new { @class = "btn btn-primary" })
+@if (Model.Book != null)
+{
+    <h3>Rentals for Book @Model.Book.Title (@Html.RouteLink("#"+Model.Book.Id, new { controller = "books", action = "details", id = Model.Book.Id }))</h3>
+    <div class="container">
+        <div class="row mb-2">
+            @if (User.IsInRole(LMS.Models.Role.CanAddBookCopies))
+            {
+                <div class="col-sm-2 pl-0">
+                    @Html.RouteLink("New Rental" , new { controller = "bookcopies", action = "choose", bookId = Model.Book.Id }, new { @class = "btn btn-primary" })
+                </div>
+            }
         </div>
     </div>
-</div>
+}
+else if (Model.Customer != null)
+{
+<h3>Rentals for Customer @Model.Customer.Name (@Html.RouteLink("#" + Model.Customer.Id, new { controller = "customers", action = "details", id = Model.Customer.Id }))</h3>
+    <div class="container">
+        <div class="row mb-2">
+            @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
+            {
+                <div class="col-sm-2 pl-0">
+                    @Html.RouteLink("New Rental" , new { controller = "rentals", action = "new", customerId = Model.Customer.Id }, new { @class = "btn btn-primary" })
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <h3>Rentals</h3>
+    <div class="container">
+        <div class="row mb-2">
+            @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
+            {
+                <div class="col-sm-2 pl-0">
+                    @Html.ActionLink("Add Rental", "New", null, new { @class = "btn btn-primary" })
+                </div>
+            }
+        </div>
+    </div>
+}
 
-<table class="table table-bordered" id="js-books-table">
-    <thead>
-        <tr class="d-flex">
-            <th class="col-sm-2">Customer</th>
-            <th>Book</th>
-            <th>Rental Date</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+<table class="table table-bordered" id="js-rental-table"></table>
 
 @section scripts{
     <script>
         $(document).ready(function () {
-            var table = $("#js-books-table").DataTable({
-                ajax: {
-                    url: "/api/books",
-                    dataSrc: ""
+            var table = $("#js-rental-table").DataTable({
+                serverSide: true,
+                autoWidth: true,
+                processing: true,
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
                 },
+                ajax: {
+                    url: "/rentals/table",
+                    method: "POST",
+                    dataSrc: "data",
+                    "data": function (d) {
+                        d.bookId = -1;
+                        d.customerId = -1;
+                        @if(Model != null && Model.Book != null)
+                        {
+                            <text>d.bookId = @Model.Book.Id;</text>
+                        }
+                        @if(Model != null && Model.Customer != null)
+                        {
+                            <text>d.customerId = @Model.Customer.Id;</text>
+                        }
+                    }
+                },
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                 columns: [
                     {
-                        data: "customer.name",
-                        render: function (bookName, row, book) {
-                            return `<a href='/books/details/${book.id}' title='View This Book'> ${bookName} </a>`;
-                        }
+                        title: "Customer Card-Id",
+                        name: "CardId",
+                        data: "customer",
+                        orderable:false,
+                        render: (customer) => `<a title="${customer.name}" href="/customers/details?id=${customer.id}">${customer.cardId}</a`
                     },
                     {
-                        data: "genres",
-                        render: function (genreList) {
-                            var genres = "";
-                            for (let i = 0; i < genreList.length - 1; i++) {
-                                genres += genreList[i].name + ", ";
+                        title: "Book Copy",
+                        name: "Title",
+                        render:(_,__,rental) => `<a title="View copy" href="/bookcopies/details/${rental.bookCopy.id}">${rental.book.title}</a>`
+                    },
+                    {
+                        title: "Rental Created",
+                        name: "Created",
+                        data: "created",
+                        searchable: false,
+                        render: (created) => created.substring(0,created.indexOf('.')).replace('T', ' ')
+                    },
+                    {
+                        title: "Rental Expires",
+                        name: "RemainingDays",
+                        data: "remainingDays",
+                        searchable: false,
+                        render: (days) => days <= 0 ? `<span class="text-danger">Expired before ${days} Days</span>` : `<span>After ${days} Days</span>`
+                    },
+                    {
+                        title: "Actions",
+                        orderable: false,
+                        searchable: false,
+                        data:"id",
+                        width:1,
+                        render: function (rentalId,_,rental) {
+                            var actions = "";
+                            @if (User.IsInRole(LMS.Models.Role.CanDeleteRentals))
+                            {
+                                <text>actions += `<a href="#" data-rental-id="${rentalId}" data-bookcopy-id="${rental.bookCopyId}" class="js-confirm mx-1 btn btn-primary">Put Back</a>`</text>
                             }
-                            genres += genreList[genreList.length - 1].name;
-                            return "<span>" + genres + "</span>";
-                        }
-                    },
-                    {
-                        data: "id",
-                        render: function (bookId) {
-                            return `<span style="display:flex">
-                                        <a href="/books/edit/${bookId}" class="mx-1">Edit</a>
-                                        <a href="#" data-book-id='${bookId}' class='js-delete mx-1'>Delete</a>
-                                    </span>`;
+                            return `<span style="display:flex;">${actions}</span>`;
                         }
                     }
-                ]
+                ],
+                order:[[3, "asc"]]
             });
-            $("#js-books-table").on("click", ".js-delete", function () {
+            $("#js-rental-table").on("click", ".js-confirm", function () {
                 var button = $(this);
-                bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
-                    if (result) {
-                        $.ajax({
-                            url: "/api/book/" + button.data("book-id"),
-                            method: "DELETE",
-                            success: function () {
-                                table.row(button.parents('tr')).remove().draw();
+                bootbox.dialog({
+                    title: "Confirm Your Action",
+                    message: '<span>Mark Book Copy #' + button.data("bookcopy-id") + ' As Returned</span>',
+                    backdrop:true,
+                    buttons: {
+                        confirm: {
+                            label: 'Put Back',
+                            className: 'btn-warning',
+                            callback: function () {
+                                $.ajax({
+                                    url: "/rentals/return/" + button.data("rental-id"),
+                                    method: "POST",
+                                    success: function (data) {
+                                        if (data.success) {
+                                            table.row(button.parents('tr')).remove().draw();
+                                            toastr.success(data.message);
+                                        } else {
+                                            toastr.error(data.error);
+                                        }
+                                    }
+                                })
                             }
-                        })
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-secondary'
+                        }
+
+                    },
+                    onEscape: function () {
+                        console.log("help welp melp");
                     }
-                    return false;
                 });
+                return false;
             });
         });
     </script>

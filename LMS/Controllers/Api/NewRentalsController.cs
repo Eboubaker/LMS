@@ -10,11 +10,11 @@ namespace LMS.Controllers.Api
 {
     public class NewRentalsController : ApiController
     {
-        private ApplicationDbContext _context;
+        private LibraryManagmentContext _context;
 
         public NewRentalsController()
         {
-            _context = new ApplicationDbContext();
+            _context = new LibraryManagmentContext();
         }
 
         // POST /api/CreateNewRentals/{rentaldto}

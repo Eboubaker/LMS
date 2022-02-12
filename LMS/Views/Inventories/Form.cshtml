@@ -1,0 +1,41 @@
+﻿@model LMS.Models.Inventory
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model == null)
+{
+    <h3>New Inventory</h3>
+}
+else
+{
+    <h3>Modify Inventory</h3>
+}
+@using (Html.BeginForm("Save", "Inventories"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Shelf)
+        @Html.TextBoxFor(m => m.Shelf, new { @class = "form-control", @type = "number" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Column)
+        @Html.TextBoxFor(m => m.Column, new { @class = "form-control", @type = "number" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Row)
+        @Html.TextBoxFor(m => m.Row, new { @class = "form-control", @type = "number" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Size)
+        @Html.TextBoxFor(m => m.Size, new { @class = "form-control", @type = "number", @min_val = "1" })
+    </div>
+    if (Model == null)
+    {
+        <button type="submit" class="btn btn-primary">Add</button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary">Save</button>
+    }
+    @Html.HiddenFor(m => m.Id)
+}

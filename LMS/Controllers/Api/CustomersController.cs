@@ -12,11 +12,11 @@ namespace LMS.Controllers.Api
 {
     public class CustomersController : ApiController
     {
-        private ApplicationDbContext _context;
+        private LibraryManagmentContext _context;
 
         public CustomersController()
         {
-            _context = new ApplicationDbContext();
+            _context = new LibraryManagmentContext();
         }
 
         // GET /api/customers

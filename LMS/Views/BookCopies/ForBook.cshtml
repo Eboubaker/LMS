@@ -1,42 +1,44 @@
-﻿@model LMS.Models.Book
+﻿@model LMS.ViewModels.BookCopiesViewModel
 @{
-    ViewBag.Title = Model.Title;
+    ViewBag.Title = "Book Copies";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>Book Copies</h2>
+<h3>Book Copies</h3>
 <div class="container">
     <div class="row mb-2">
         @if (User.IsInRole(LMS.Models.Role.CanAddBookCopies))
         {
-            <div class="col-sm-2">
+            <div class="col-sm-2 pl-0">
                 @Html.ActionLink("Add Copy", "New", null, new { @class = "btn btn-primary" })
             </div>
         }
     </div>
 </div>
 
-<table class="table table-bordered" id="js-books-table"></table>
+<table class="table table-bordered" id="js-copies-table"></table>
 
 @section scripts{
     <script>
         $(document).ready(function () {
-            var table = $("#js-books-table").DataTable({
+            var table = $("#js-copies-table").DataTable({
                 serverSide: true,
                 autoWidth: true,
                 processing: true,
-
-
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+                },
                 ajax: {
                     url: "/bookcopies/table",
                     method: "POST",
                     dataSrc: "data",
                     "data": function (d) {
-                        d.bookId =@Model.Id
+                        d.bookId = @Model.Book.Id;
                     }
                 },
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                 columns: [
                     {
+
                         title: "Location - Shelf",
                         name: "Shelf",
                         data: "inventory.shelf",
@@ -59,9 +61,9 @@
                         name: "Rented",
                         data: "rented",
                         searchable: false,
-                        render: function (rented,_, copy) {
+                        render: function (rented, _, copy) {
                             if (rented)
-                                `<a href="/rentals/ForCopy/${copy.id}">Rented</a>`;
+                                return `<a title="${"Customer#"+copy.customer.id+"("+copy.customer.name+")"}" title="View rental" href="/rentals/ForCopy/${copy.id}">Rented</a>`;
                             return "No";
                         }
                     },
@@ -69,27 +71,44 @@
                         title: "Actions",
                         data: "id",
                         orderable: false,
-                        searchable:false,
-                        render: function (copyId) {
-                            var edit = remove = rent = "";
-                            @if (User.IsInRole(LMS.Models.Role.CanEditBookCopies))
-                            {
-                                <text>edit = `<a href="/bookcopies/edit/${copyId}" class="mx-1 btn btn-success"><i class="fa fa-edit"></i>Edit</a>`</text>
+                        searchable: false,
+                        width:1,
+                        render: function (copyId,_,copy) {
+                            var edit = remove = rent = choose = "";
+                            @if(Model.RentalForm == null || !Model.RentalForm.BookId.HasValue) {
+                                if (User.IsInRole(LMS.Models.Role.CanEditBookCopies))
+                                {
+                                    <text>edit = `<a href="/bookcopies/edit/${copyId}" class="mx-1 btn btn-primary"><i class="fa fa-edit"></i>Edit</a>`</text>
+                                }
+                                if (User.IsInRole(LMS.Models.Role.CanDeleteBookCopies))
+                                {
+                                    <text>remove = `<a href="#" data-copy-id='${copyId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                }
+                                if (User.IsInRole(LMS.Models.Role.CanAddRentals))
+                                {
+                                    <text>
+                                        if(!copy.rented)
+                                            rent = `<a href="/rentals/new?copyId=${copyId}" class='mx-1 btn btn-primary'>Rent</a>`
+                                    </text>
+                                }
                             }
-                            @if (User.IsInRole(LMS.Models.Role.CanDeleteBookCopies))
+                            else
                             {
-                                <text>remove = `<a href="#" data-book-id='${copyId}' class='js-delete mx-1 btn btn-danger'><i class="fa fa-trash"></i>Delete</a>`</text>
+                                <text>
+                                    if (!copy.rented) {
+                                        choose = `<a href="/rentals/new?customerId=@Model.RentalForm.CustomerId&copyId=${copyId}&bookId=@Model.Book.Id" class='mx-1 btn btn-success'>Choose</a>`;
+                                    } else {
+                                        choose = `<a href="/rentals/forcopy?id=${copyId}" class='mx-1 btn btn-primary'>Rent Details</a>`;
+                                    }
+                                </text>
                             }
-                            @if (User.IsInRole(LMS.Models.Role.CanAddRentals))
-                            {
-                                <text>rent = `<a href="/rentals/forcopy/${copyId}" class='mx-1 btn btn-primary'>Rent</a>`</text>
-                            }
-                            return `<span style="display:flex">${rent} ${edit} ${remove}</span>`;
+                            return `<span style="display:flex;">${rent+edit+remove+choose}</span>`;
                         }
                     }
-                ]
+                ],
+                order:[[3, "asc"]]
             });
-            $("#js-books-table").on("click", ".js-delete", function () {
+            $("#js-copies-table").on("click", ".js-delete", function () {
                 var button = $(this);
                 @*bootbox.confirm("Delete " + button.parents('tr').children().first().find("a").text() + " ?", function (result) {
                     if (result) {
@@ -113,12 +132,15 @@
                             className: 'btn-danger',
                             callback: function () {
                                 $.ajax({
-                                    url: "/bookcopies/delete/" + button.data("book-id"),
+                                    url: "/bookcopies/delete/" + button.data("copy-id"),
                                     method: "POST",
                                     success: function () {
-                                        table.row(button.parents('tr')).remove().draw();
-                                        toastr.success("Book Copy Removed!");
-                                        console.log("Yeeeeeeees");
+                                        if (data.sucess) {
+                                            table.row(button.parents('tr')).remove().draw();
+                                            toastr.success(data.message);
+                                        } else {
+                                            toastr.error(data.error);
+                                        }
                                     }
                                 })
                             }
